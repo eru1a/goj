@@ -3,15 +3,77 @@ package main
 import (
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 
+	"github.com/BurntSushi/toml"
 	"github.com/gookit/color"
 	"github.com/urfave/cli"
 )
 
+const defaultConfigToml = `default_language = "c++"
+
+[[language]]
+name = "c++"
+ext = ".cpp"
+# [P] : Problem Name
+build_cmd = "g++ -g -o [P] [P].cpp"
+run_cmd = "./[P]"
+template = """#include <bits/stdc++.h>
+
+using namespace std;
+using ll = long long;
+
+int main() {
+  cin.tie(nullptr);
+  ios::sync_with_stdio(false);
+
+  return 0;
+}
+"""
+
+[[language]]
+name = "python"
+ext = ".py"
+run_cmd = "python [P].py"
+`
+
+func findLang(languages []*Language, defaultLang, argLang string) (*Language, error) {
+	langName := defaultLang
+	if argLang != "" {
+		langName = argLang
+	}
+	for _, l := range languages {
+		if l.Name == langName {
+			return l, nil
+		}
+	}
+	return nil, fmt.Errorf("cannot find %s in languages", langName)
+}
+
 func main() {
+	configDir, err := os.UserConfigDir()
+	if err != nil {
+		panic(err)
+	}
+	_, err = os.Stat(filepath.Join(configDir, "goj", "config.toml"))
+	if err != nil {
+		if err := os.MkdirAll(filepath.Join(configDir, "goj"), 0755); err != nil {
+			panic(err)
+		}
+		if err := ioutil.WriteFile(filepath.Join(configDir, "goj", "config.toml"), []byte(defaultConfigToml), 0644); err != nil {
+			panic(err)
+		}
+	}
+	var config Config
+	_, err = toml.DecodeFile(filepath.Join(configDir, "goj", "config.toml"), &config)
+	if err != nil {
+		panic(err)
+	}
+
 	app := cli.NewApp()
 
 	app.Commands = []cli.Command{
@@ -22,14 +84,18 @@ func main() {
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:  "language, l",
-					Value: "cpp",
+					Value: "c++",
 				},
 			},
 			Action: func(c *cli.Context) error {
 				if len(c.Args()) != 1 {
 					return errors.New("goj download <contest> or <contest/problem>")
 				}
-				lang := Languages[c.String("l")]
+				lang, err := findLang(config.Languages, config.DefaultLanguage, c.String("l"))
+				if err != nil {
+					return err
+				}
+
 				split := strings.Split(c.Args().First(), "/")
 				client := new(http.Client)
 				switch len(split) {
@@ -58,19 +124,23 @@ func main() {
 				},
 				cli.StringFlag{
 					Name:  "language, l",
-					Value: "cpp",
+					Value: "c++",
 				},
 			},
 			Action: func(c *cli.Context) error {
 				if len(c.Args()) != 1 {
 					return errors.New("goj test <problem> -c <command> -l <language>")
 				}
+				lang, err := findLang(config.Languages, config.DefaultLanguage, c.String("l"))
+				if err != nil {
+					return err
+				}
+
 				problem := c.Args().First()
 				cmd := c.String("c")
-				lang := Languages[c.String("l")]
 				if cmd == "<none>" {
 					if err := lang.Build(problem); err != nil {
-						panic(err)
+						return err
 					}
 					cmd = lang.GetRunCmd(problem)
 				}
@@ -88,7 +158,6 @@ func main() {
 	}
 
 	if err := app.Run(os.Args); err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
+		panic(err)
 	}
 }

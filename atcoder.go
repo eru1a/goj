@@ -53,19 +53,17 @@ func (c *Contest) Save(client *http.Client) error {
 
 func (p *Problem) Save() error {
 	dir := "test_" + p.Name
-	if err := os.Mkdir(dir, 0755); err != nil {
-		if !os.IsExist(err) {
-			return err
-		}
+	if err := os.MkdirAll(dir, 0755); err != nil {
+		return err
 	}
 	for i, testcase := range p.TestCases {
 		// 既にファイルがあった場合は上書きになる
 		if err := ioutil.WriteFile(filepath.Join(dir, fmt.Sprintf("sample-%d.in", i+1)),
-			[]byte(testcase.Input), 0666); err != nil {
+			[]byte(testcase.Input), 0644); err != nil {
 			return err
 		}
 		if err := ioutil.WriteFile(filepath.Join(dir, fmt.Sprintf("sample-%d.out", i+1)),
-			[]byte(testcase.Output), 0666); err != nil {
+			[]byte(testcase.Output), 0644); err != nil {
 			return err
 		}
 	}

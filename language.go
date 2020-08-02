@@ -7,11 +7,11 @@ import (
 )
 
 type Language struct {
-	Name     string
-	Ext      string
-	BuildCmd string
-	RunCmd   string
-	Template string
+	Name     string `toml:"name"`
+	Ext      string `toml:"ext"`
+	BuildCmd string `toml:"build_cmd"`
+	RunCmd   string `toml:"run_cmd"`
+	Template string `toml:"template"`
 }
 
 func runCmd(problem string, cmd string) error {
@@ -38,30 +38,4 @@ func (l *Language) Build(problem string) error {
 
 func (l *Language) GetRunCmd(problem string) string {
 	return strings.ReplaceAll(l.RunCmd, "[P]", problem)
-}
-
-var Languages = map[string]*Language{
-	"cpp": {
-		Name:     "cpp",
-		Ext:      ".cpp",
-		BuildCmd: "g++ -g -o [P] [P].cpp",
-		RunCmd:   "./[P]",
-		Template: `#include <bits/stdc++.h>
-
-using namespace std;
-using ll = long long;
-
-int main() {
-  cin.tie(nullptr);
-  ios::sync_with_stdio(false);
-
-  return 0;
-}
-`,
-	},
-	"python": {
-		Name:   "python",
-		Ext:    ".py",
-		RunCmd: "python [P].py",
-	},
 }
