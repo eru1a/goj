@@ -73,7 +73,19 @@ func (p *Problem) Save() error {
 	return nil
 }
 
-func DownloadAtCoderContest(client *http.Client, contest string) error {
+func makeTemplateFile(problemName string, lang *Language) error {
+	file := problemName + lang.Ext
+	_, err := os.Stat(file)
+	// ファイルが存在しない
+	if err != nil {
+		if err := ioutil.WriteFile(file, []byte(lang.Template), 0666); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func DownloadAtCoderContest(client *http.Client, contest string, lang *Language) error {
 	c, err := FetchAtCoderContest(client, contest)
 	if err != nil {
 		return err
@@ -86,16 +98,22 @@ func DownloadAtCoderContest(client *http.Client, contest string) error {
 		if err := p.Save(); err != nil {
 			return err
 		}
+		if err := makeTemplateFile(p.Name, lang); err != nil {
+			return err
+		}
 	}
 	return nil
 }
 
-func DownloadAtCoderProblem(client *http.Client, contest, problem string) error {
+func DownloadAtCoderProblem(client *http.Client, contest, problem string, lang *Language) error {
 	p, err := FetchAtCoderProblem(client, contest, problem)
 	if err != nil {
 		return err
 	}
 	if err := p.Save(); err != nil {
+		return err
+	}
+	if err := makeTemplateFile(p.Name, lang); err != nil {
 		return err
 	}
 	return nil

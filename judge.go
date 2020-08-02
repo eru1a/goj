@@ -56,7 +56,8 @@ func Judge(problem string, command string) (ac, wa, re int) {
 			panic(err)
 		}
 
-		cmd := exec.Command(command)
+		c := strings.Split(command, " ")
+		cmd := exec.Command(c[0], c[1:]...)
 		stdin, err := cmd.StdinPipe()
 		if err != nil {
 			panic(err)

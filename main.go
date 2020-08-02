@@ -19,19 +19,26 @@ func main() {
 			Name:    "download",
 			Aliases: []string{"dl", "d"},
 			Usage:   "download testcases",
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "language, l",
+					Value: "cpp",
+				},
+			},
 			Action: func(c *cli.Context) error {
 				if len(c.Args()) != 1 {
 					return errors.New("goj download <contest> or <contest/problem>")
 				}
+				lang := Languages[c.String("l")]
 				split := strings.Split(c.Args().First(), "/")
 				client := new(http.Client)
 				switch len(split) {
 				case 1:
-					if err := DownloadAtCoderContest(client, split[0]); err != nil {
+					if err := DownloadAtCoderContest(client, split[0], lang); err != nil {
 						return err
 					}
 				case 2:
-					if err := DownloadAtCoderProblem(client, split[0], split[1]); err != nil {
+					if err := DownloadAtCoderProblem(client, split[0], split[1], lang); err != nil {
 						return err
 					}
 				default:
@@ -43,18 +50,31 @@ func main() {
 		{
 			Name:    "test",
 			Aliases: []string{"t"},
-			Usage:   "test",
+			Usage:   "test testcases",
 			Flags: []cli.Flag{
 				cli.StringFlag{
-					Name:  "process, p",
-					Value: "./a.out",
+					Name:  "command, c",
+					Value: "<none>",
+				},
+				cli.StringFlag{
+					Name:  "language, l",
+					Value: "cpp",
 				},
 			},
 			Action: func(c *cli.Context) error {
 				if len(c.Args()) != 1 {
-					return errors.New("goj test <problem>")
+					return errors.New("goj test <problem> -c <command> -l <language>")
 				}
-				ac, wa, re := Judge(c.Args().First(), c.String("p"))
+				problem := c.Args().First()
+				cmd := c.String("c")
+				lang := Languages[c.String("l")]
+				if cmd == "<none>" {
+					if err := lang.Build(problem); err != nil {
+						panic(err)
+					}
+					cmd = lang.GetRunCmd(problem)
+				}
+				ac, wa, re := Judge(problem, cmd)
 				result := color.Green.Sprint("AC")
 				if re > 0 {
 					result = color.Red.Sprint("RE")
