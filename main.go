@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 
 	"github.com/BurntSushi/toml"
@@ -52,6 +53,43 @@ func findLang(languages []*Language, defaultLang, argLang string) (*Language, er
 		}
 	}
 	return nil, fmt.Errorf("cannot find %s in languages", langName)
+}
+
+// keywordから問題を推測する。
+// - keywordが問題の名前('abc173_a'等)ならファイル名が一致している。
+// - keywordが問題のID('a'等)ならファイル名が'_ID'で終わっている。
+// - keywordが空文字列なら条件なし。
+// 上記の条件を満たすファイルの内、拡張子がextで最も最近編集されたファイルの名前を返す。
+func getProblem(keyword string, ext string) (string, error) {
+	files, err := ioutil.ReadDir(".")
+	if err != nil {
+		return "", err
+	}
+	var files2 []os.FileInfo
+	for _, file := range files {
+		if file.IsDir() {
+			continue
+		}
+		if !strings.HasSuffix(file.Name(), ext) {
+			continue
+		}
+		fileNameWithoutExt := strings.TrimSuffix(file.Name(), ext)
+		switch {
+		case keyword == "":
+			files2 = append(files2, file)
+		case fileNameWithoutExt == keyword:
+			files2 = append(files2, file)
+		case strings.HasSuffix(fileNameWithoutExt, "_"+keyword):
+			files2 = append(files2, file)
+		}
+	}
+	if len(files2) == 0 {
+		return "", fmt.Errorf("cannot find a file that meets the requirements. keyword: %s, ext: %s", keyword, ext)
+	}
+	sort.SliceStable(files2, func(i, j int) bool {
+		return files2[i].ModTime().Unix() > files2[j].ModTime().Unix()
+	})
+	return strings.TrimSuffix(files2[0].Name(), ext), nil
 }
 
 func main() {
@@ -128,7 +166,7 @@ func main() {
 				},
 			},
 			Action: func(c *cli.Context) error {
-				if len(c.Args()) != 1 {
+				if len(c.Args()) > 1 {
 					return errors.New("goj test <problem> -c <command> -l <language>")
 				}
 				lang, err := findLang(config.Languages, config.DefaultLanguage, c.String("l"))
@@ -136,7 +174,10 @@ func main() {
 					return err
 				}
 
-				problem := c.Args().First()
+				problem, err := getProblem(c.Args().First(), lang.Ext)
+				if err != nil {
+					return err
+				}
 				cmd := c.String("c")
 				if cmd == "<none>" {
 					if err := lang.Build(problem); err != nil {
