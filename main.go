@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/http/cookiejar"
 	"os"
 	"path/filepath"
 	"sort"
@@ -92,25 +93,47 @@ func getProblem(keyword string, ext string) (string, error) {
 	return strings.TrimSuffix(files2[0].Name(), ext), nil
 }
 
-func main() {
+func getConfig() (*Config, error) {
 	configDir, err := os.UserConfigDir()
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	_, err = os.Stat(filepath.Join(configDir, "goj", "config.toml"))
 	if err != nil {
 		if err := os.MkdirAll(filepath.Join(configDir, "goj"), 0755); err != nil {
-			panic(err)
+			return nil, err
 		}
 		if err := ioutil.WriteFile(filepath.Join(configDir, "goj", "config.toml"), []byte(defaultConfigToml), 0644); err != nil {
-			panic(err)
+			return nil, err
 		}
 	}
 	var config Config
 	_, err = toml.DecodeFile(filepath.Join(configDir, "goj", "config.toml"), &config)
 	if err != nil {
+		return nil, err
+	}
+	return &config, nil
+}
+
+func main() {
+	config, err := getConfig()
+	if err != nil {
 		panic(err)
 	}
+
+	jar, err := cookiejar.New(nil)
+	if err != nil {
+		panic(err)
+	}
+	client := &http.Client{Jar: jar}
+	username := os.Getenv("ATCODER_USER")
+	password := os.Getenv("ATCODER_PASSWORD")
+	if username != "" && password != "" {
+		if err := LoginAtCoder(client, username, password); err != nil {
+			panic(err)
+		}
+	}
+	// cookiejarってどうやって保存するの...？
 
 	app := cli.NewApp()
 
@@ -135,7 +158,6 @@ func main() {
 				}
 
 				split := strings.Split(c.Args().First(), "/")
-				client := new(http.Client)
 				switch len(split) {
 				case 1:
 					if err := DownloadAtCoderContest(client, split[0], lang); err != nil {
@@ -180,10 +202,10 @@ func main() {
 				}
 				cmd := c.String("c")
 				if cmd == "<none>" {
+					cmd = lang.GetRunCmd(problem)
 					if err := lang.Build(problem); err != nil {
 						return err
 					}
-					cmd = lang.GetRunCmd(problem)
 				}
 				ac, wa, re := Judge(problem, cmd)
 				result := color.Green.Sprint("AC")

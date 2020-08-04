@@ -6,6 +6,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -36,6 +37,47 @@ type Problem struct {
 type TestCase struct {
 	Input  string
 	Output string
+}
+
+func LoginAtCoder(client *http.Client, username, password string) error {
+	submitURL := ATCODER_BASE_URL + "/login"
+	res, err := client.Get(submitURL)
+	if err != nil {
+		return err
+	}
+	defer res.Body.Close()
+
+	csrf, err := ParseAtCoderCSRFToken(res.Body)
+	if err != nil {
+		return err
+	}
+
+	post, err := client.PostForm(submitURL, url.Values{
+		"username":   {username},
+		"password":   {password},
+		"csrf_token": {csrf},
+	})
+	if err != nil {
+		return err
+	}
+	defer post.Body.Close()
+
+	doc, err := goquery.NewDocumentFromReader(post.Body)
+	if err != nil {
+		return err
+	}
+
+	fail := doc.Find("div.alert-danger")
+	if len(fail.Nodes) != 0 {
+		return errors.New("login failed")
+	}
+
+	success := doc.Find("div.alert-success")
+	if len(success.Nodes) != 0 {
+		return nil
+	}
+
+	return errors.New("unknown login error")
 }
 
 func (c *Contest) Save(client *http.Client) error {
@@ -138,6 +180,19 @@ func FetchAtCoderContest(client *http.Client, contest string) (*Contest, error) 
 		URL:         url,
 		ProblemURLs: problemURLs,
 	}, nil
+}
+
+func ParseAtCoderCSRFToken(r io.Reader) (string, error) {
+	doc, err := goquery.NewDocumentFromReader(r)
+	if err != nil {
+		return "", nil
+	}
+
+	csrf, ok := doc.Find(`input[name="csrf_token"]`).Attr("value")
+	if !ok {
+		return "", errors.New("cannot find csrf_token")
+	}
+	return csrf, nil
 }
 
 func ParseAtCoderContest(r io.Reader) ([]string, error) {
