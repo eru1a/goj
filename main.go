@@ -149,7 +149,7 @@ func main() {
 				},
 			},
 			Action: func(c *cli.Context) error {
-				if len(c.Args()) != 1 {
+				if len(c.Args()) > 1 {
 					return errors.New("goj download <contest> or <contest/problem>")
 				}
 				lang, err := findLang(config.Languages, config.DefaultLanguage, c.String("l"))
@@ -157,7 +157,16 @@ func main() {
 					return err
 				}
 
-				split := strings.Split(c.Args().First(), "/")
+				contest := c.Args().First()
+				if contest == "" {
+					cwd, err := os.Getwd()
+					if err != nil {
+						return err
+					}
+					contest = filepath.Base(cwd)
+				}
+
+				split := strings.Split(contest, "/")
 				switch len(split) {
 				case 1:
 					if err := DownloadAtCoderContest(client, split[0], lang); err != nil {
