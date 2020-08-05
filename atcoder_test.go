@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/k0kubun/pp"
+	"github.com/kylelemons/godebug/pretty"
 )
 
 func TestParseAtCoderContest(t *testing.T) {
@@ -106,7 +106,7 @@ func TestParseAtCoderProblem(t *testing.T) {
 			t.Errorf("[%s] want %v, got %v\n", test.file, test.id, id)
 		}
 		if !reflect.DeepEqual(testcases, test.testcases) {
-			t.Errorf("[%s]\nwant\t%v\ngot\t%v\n", test.file, pp.Sprint(test.testcases), pp.Sprint(testcases))
+			t.Errorf("[%s] %s", test.file, pretty.Compare(test.testcases, testcases))
 		}
 	}
 }
