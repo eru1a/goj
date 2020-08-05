@@ -5,15 +5,17 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"net/http/cookiejar"
 	"os"
 	"path/filepath"
 	"sort"
 	"strings"
+	"syscall"
 
 	"github.com/BurntSushi/toml"
 	"github.com/gookit/color"
+	cookiejar "github.com/juju/persistent-cookiejar"
 	"github.com/urfave/cli"
+	"golang.org/x/crypto/ssh/terminal"
 )
 
 const defaultConfigToml = `default_language = "c++"
@@ -121,19 +123,20 @@ func main() {
 		panic(err)
 	}
 
-	jar, err := cookiejar.New(nil)
+	cacheDir, err := os.UserCacheDir()
+	if err != nil {
+		panic(err)
+	}
+	gojCacheDir := filepath.Join(cacheDir, "goj")
+	if err := os.MkdirAll(gojCacheDir, 0755); err != nil {
+		panic(err)
+	}
+	cookieJarFile := filepath.Join(gojCacheDir, "cookiejar")
+	jar, err := cookiejar.New(&cookiejar.Options{Filename: cookieJarFile})
 	if err != nil {
 		panic(err)
 	}
 	client := &http.Client{Jar: jar}
-	username := os.Getenv("ATCODER_USER")
-	password := os.Getenv("ATCODER_PASSWORD")
-	if username != "" && password != "" {
-		if err := LoginAtCoder(client, username, password); err != nil {
-			panic(err)
-		}
-	}
-	// cookiejarってどうやって保存するの...？
 
 	app := cli.NewApp()
 
@@ -224,6 +227,36 @@ func main() {
 					result = color.Red.Sprint("WA")
 				}
 				fmt.Printf("%s (AC:%d WA:%d RE:%d)\n", result, ac, wa, re)
+				return nil
+			},
+		},
+		{
+			Name: "login",
+			Action: func(c *cli.Context) error {
+				if len(c.Args()) > 0 {
+					return errors.New("goj login")
+				}
+
+				var username string
+				fmt.Print("username: ")
+				_, err := fmt.Scanln(&username)
+				if err != nil {
+					return err
+				}
+				fmt.Print("password: ")
+				bytes, err := terminal.ReadPassword(syscall.Stdin)
+				if err != nil {
+					return err
+				}
+				password := string(bytes)
+				if err := LoginAtCoder(client, username, password); err != nil {
+					return err
+				}
+				if err := jar.Save(); err != nil {
+					return err
+				}
+
+				fmt.Println("login success")
 				return nil
 			},
 		},
