@@ -28,16 +28,19 @@ type TestCase struct {
 }
 
 type ProblemInfo struct {
-	// 問題名の横にある問題ID
-	// A - Payment だったら"A"
+	// 問題名の横にある問題ID (e.g. "A", "B")
+	// AtCoder Beginners Selectionだと"ABC086A"みたいなIDになる。
 	ID string `toml:"id"`
-	// 問題の名前
-	// コンテスト名_ID
-	// https://atcoder.jp/contests/abc173/tasks/abc173_aだったら"abc173_a"
-	// https://atcoder.jp/contests/arc077/tasks/arc084_aだったら"arc077_c"
-	// https://atcoder.jp/contests/abc001/tasks/abc001_1だったら"abc001_a"
+	// ファイル名等に使う問題の名前。(e.g. "abc174_a")
+	// URLの最後の要素。
+	// 昔のコンテストだと、
+	// `abc001/abc001_1`とか`abc077/arc084_a`みたいに`コンテスト_ID`の形になってないことがある。
+	// 最近のでも`m-solutions2020/m_solutions2020_a`みたいなのがあるか。
 	Name string `toml:"name"`
-	URL  string `toml:"url"`
+	// コンテスト名。
+	// e.g. "abc174"
+	Contest string `toml:"contest"`
+	URL     string `toml:"url"`
 }
 
 type Problem struct {
@@ -50,12 +53,12 @@ type Problems struct {
 }
 
 func LoadProblems() (*Problems, error) {
-	_, err := os.Stat(".goj.toml")
+	_, err := os.Stat("goj.toml")
 	if err != nil {
 		return nil, nil
 	}
 	var problems Problems
-	_, err = toml.DecodeFile(".goj.toml", &problems)
+	_, err = toml.DecodeFile("goj.toml", &problems)
 	if err != nil {
 		return nil, err
 	}
@@ -71,7 +74,7 @@ func (p *ProblemInfo) AddTOML() error {
 		return err
 	}
 
-	file, err := os.OpenFile(".goj.toml", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	file, err := os.OpenFile("goj.toml", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
 		return err
 	}
@@ -159,8 +162,8 @@ func (p *Problem) Save() error {
 	return nil
 }
 
-func makeTemplateFile(problemName string, lang *Language) error {
-	file := problemName + lang.Ext
+func makeTemplateFile(problem string, lang *Language) error {
+	file := problem + lang.Ext
 	_, err := os.Stat(file)
 	// ファイルが存在しない
 	if err != nil {
@@ -278,12 +281,12 @@ func FetchAtCoderProblem(client *http.Client, contest, problem string) (*Problem
 	if err != nil {
 		return nil, err
 	}
-	name := contest + "_" + strings.ToLower(id)
 
 	problemInfo := &ProblemInfo{
-		ID:   id,
-		Name: name,
-		URL:  url,
+		ID:      id,
+		Name:    problem,
+		Contest: contest,
+		URL:     url,
 	}
 	if err := problemInfo.AddTOML(); err != nil {
 		panic(err)

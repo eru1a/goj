@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"io/ioutil"
 	"os/exec"
 	"strings"
 )
@@ -29,8 +31,16 @@ func (l *Language) Build(problem string) error {
 	}
 	buildCmd := strings.ReplaceAll(l.BuildCmd, "[P]", problem)
 	fmt.Println(buildCmd)
-	cmd := strings.Split(buildCmd, " ")
-	if err := exec.Command(cmd[0], cmd[1:]...).Run(); err != nil {
+	c := strings.Split(buildCmd, " ")
+	cmd := exec.Command(c[0], c[1:]...)
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
+	if err := cmd.Run(); err != nil {
+		bytes, e := ioutil.ReadAll(&stderr)
+		if e != nil {
+			return e
+		}
+		fmt.Println(string(bytes))
 		return err
 	}
 	return nil

@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"path"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -31,12 +30,8 @@ func findLang(languages []*Language, defaultLang, argLang string) (*Language, er
 	return nil, fmt.Errorf("cannot find %s in languages", langName)
 }
 
-// keywordから問題を推測する。
-// - keywordが問題の名前('abc173_a'等)ならファイル名が一致している。
-// - keywordが問題のID('a'等)ならファイル名が'_ID'で終わっている。
-// - keywordが空文字列なら条件なし。
-// 上記の条件を満たすファイルの内、拡張子がextで最も最近編集されたファイルの名前を返す。
-func getProblem(keyword string, ext string) (string, error) {
+// 拡張子がextでsuffixで終わる最も最近編集されたファイルの名前(問題名)を返す。
+func getProblem(suffix string, ext string) (string, error) {
 	files, err := ioutil.ReadDir(".")
 	if err != nil {
 		return "", err
@@ -51,16 +46,16 @@ func getProblem(keyword string, ext string) (string, error) {
 		}
 		fileNameWithoutExt := strings.TrimSuffix(file.Name(), ext)
 		switch {
-		case keyword == "":
+		case suffix == "":
 			files2 = append(files2, file)
-		case fileNameWithoutExt == keyword:
+		case fileNameWithoutExt == suffix:
 			files2 = append(files2, file)
-		case strings.HasSuffix(fileNameWithoutExt, "_"+keyword):
+		case strings.HasSuffix(fileNameWithoutExt, suffix):
 			files2 = append(files2, file)
 		}
 	}
 	if len(files2) == 0 {
-		return "", fmt.Errorf("cannot find a file that meets the requirements. keyword: %s, ext: %s", keyword, ext)
+		return "", fmt.Errorf("cannot find a file. suffix: %s, ext: %s", suffix, ext)
 	}
 	sort.SliceStable(files2, func(i, j int) bool {
 		return files2[i].ModTime().Unix() > files2[j].ModTime().Unix()
@@ -243,41 +238,42 @@ func main() {
 				switch len(c.Args()) {
 				case 2:
 					split := strings.Split(c.Args().Get(0), "/")
+					if len(split) != 2 {
+						return errors.New("goj submit <contest>/<problem> <source_file>")
+					}
 					contest = split[0]
 					problem = split[1]
 					src = c.Args().Get(1)
 				case 0:
-					// 最後に編集されたファイルから提出する問題を推測する
-					p, err := getProblem("", lang.Ext)
+					// 最後に編集されたファイルから提出する問題を決める
+					problem, err = getProblem("", lang.Ext)
 					if err != nil {
 						return err
 					}
 					for _, pp := range problems.Problems {
-						if pp.Name == p {
-							contest = strings.TrimSuffix(pp.Name, "_"+strings.ToLower(pp.ID))
-							problem = path.Base(pp.URL)
-							src = p + lang.Ext
+						if pp.Name == problem {
+							contest = pp.Contest
+							src = problem + lang.Ext
 							break
 						}
 					}
 					if contest == "" {
-						return fmt.Errorf("cannot find problem: %s", p)
+						return fmt.Errorf("cannot find problem: %s", problem)
 					}
 				default:
 					return errors.New("goj submit <contest>/<problem> <source_file>")
 				}
 
-				problemName := strings.TrimSuffix(src, lang.Ext)
-				if err := lang.Build(problemName); err != nil {
+				if err := lang.Build(problem); err != nil {
 					return err
 				}
-				if ac := judge(problemName, lang.GetRunCmd(problemName)); !ac {
+				if ac := judge(problem, lang.GetRunCmd(problem)); !ac {
 					fmt.Println("interrupted the submission because test failed")
 					return nil
 				}
 
 				if err := SubmitAtCoder(client, contest, problem, src, lang.Name); err != nil {
-					return err
+					return fmt.Errorf("%v: submit failed (%s, %s, %s, %s)", err, contest, problem, src, lang.Name)
 				}
 				fmt.Println("submit success:", contest, problem, src, lang.Name)
 				return nil
