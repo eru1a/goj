@@ -144,7 +144,7 @@ func main() {
 		{
 			Name:    "download",
 			Aliases: []string{"dl", "d"},
-			Usage:   "download testcases",
+			Usage:   "goj download <contest> or <contest/problem>",
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:  "language, l",
@@ -188,7 +188,7 @@ func main() {
 		{
 			Name:    "test",
 			Aliases: []string{"t"},
-			Usage:   "test testcases",
+			Usage:   "goj test <problem>",
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:  "command, c",
@@ -201,7 +201,7 @@ func main() {
 			},
 			Action: func(c *cli.Context) error {
 				if len(c.Args()) > 1 {
-					return errors.New("goj test <problem> -c <command> -l <language>")
+					return errors.New("goj test <problem>")
 				}
 				lang, err := findLang(config.Languages, config.DefaultLanguage, c.String("l"))
 				if err != nil {
@@ -231,7 +231,8 @@ func main() {
 			},
 		},
 		{
-			Name: "login",
+			Name:  "login",
+			Usage: "goj login",
 			Action: func(c *cli.Context) error {
 				if len(c.Args()) > 0 {
 					return errors.New("goj login")
@@ -257,6 +258,35 @@ func main() {
 				}
 
 				fmt.Println("login success")
+				return nil
+			},
+		},
+		{
+			Name:    "submit",
+			Aliases: []string{"s"},
+			Usage:   "goj submit <contest>/<problem> <source_file>",
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "language, l",
+					Value: "c++",
+				},
+			},
+			Action: func(c *cli.Context) error {
+				if len(c.Args()) != 2 {
+					return errors.New("goj submit <contest>/<problem> <source_file>")
+				}
+				lang, err := findLang(config.Languages, config.DefaultLanguage, c.String("l"))
+				if err != nil {
+					return err
+				}
+				split := strings.Split(c.Args().Get(0), "/")
+				contest := split[0]
+				problem := split[1]
+				src := c.Args().Get(1)
+				if err := SubmitAtCoder(client, contest, problem, src, lang.Name); err != nil {
+					return err
+				}
+				fmt.Println("submit success")
 				return nil
 			},
 		},

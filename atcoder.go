@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"io"
@@ -331,4 +332,69 @@ func ParseAtCoderProblem(r io.Reader) (string, []*TestCase, error) {
 	// もっと別のパターンもある？
 
 	return "", nil, errors.New("cannot find sample testcase")
+}
+
+func SubmitAtCoder(client *http.Client, contest, problem string, src_path string, lang string) error {
+	submitURL := fmt.Sprintf("https://atcoder.jp/contests/%s/submit", contest)
+	res, err := client.Get(submitURL)
+	if err != nil {
+		return err
+	}
+	defer res.Body.Close()
+
+	// 一つのio.Readerを二回読み込むには...？
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return err
+	}
+
+	languageID, err := ParseAtCoderLanguageID(bytes.NewReader(body), problem, lang)
+	if err != nil {
+		return err
+	}
+
+	code, err := ioutil.ReadFile(src_path)
+	if err != nil {
+		return err
+	}
+
+	csrf, err := ParseAtCoderCSRFToken(bytes.NewReader(body))
+	if err != nil {
+		return err
+	}
+
+	post, err := client.PostForm(submitURL, url.Values{
+		"data.TaskScreenName": {problem},
+		"data.LanguageId":     {languageID},
+		"sourceCode":          {string(code)},
+		"csrf_token":          {csrf},
+	})
+	if err != nil {
+		return err
+	}
+	defer post.Body.Close()
+
+	return nil
+}
+
+func ParseAtCoderLanguageID(r io.Reader, problem string, lang string) (string, error) {
+	doc, err := goquery.NewDocumentFromReader(r)
+	if err != nil {
+		return "", err
+	}
+
+	var id string
+
+	doc.Find(fmt.Sprintf("div[id=select-lang-%s] select option", problem)).Each(func(i int, s *goquery.Selection) {
+		if strings.HasPrefix(strings.ToLower(strings.TrimSpace(s.Text())), lang) {
+			if v, ok := s.Attr("value"); id == "" && ok {
+				id = v
+			}
+		}
+	})
+
+	if id == "" {
+		return "", errors.New("cannot find language id")
+	}
+	return id, nil
 }
