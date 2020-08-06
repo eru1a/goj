@@ -18,33 +18,6 @@ import (
 	"golang.org/x/crypto/ssh/terminal"
 )
 
-const defaultConfigToml = `default_language = "c++"
-
-[[language]]
-name = "c++"
-ext = ".cpp"
-# [P] : Problem Name
-build_cmd = "g++ -g -o [P] [P].cpp"
-run_cmd = "./[P]"
-template = """#include <bits/stdc++.h>
-
-using namespace std;
-using ll = long long;
-
-int main() {
-  cin.tie(nullptr);
-  ios::sync_with_stdio(false);
-
-  return 0;
-}
-"""
-
-[[language]]
-name = "python"
-ext = ".py"
-run_cmd = "python [P].py"
-`
-
 func findLang(languages []*Language, defaultLang, argLang string) (*Language, error) {
 	langName := defaultLang
 	if argLang != "" {
@@ -93,6 +66,21 @@ func getProblem(keyword string, ext string) (string, error) {
 		return files2[i].ModTime().Unix() > files2[j].ModTime().Unix()
 	})
 	return strings.TrimSuffix(files2[0].Name(), ext), nil
+}
+
+func judge(problem string, cmd string) bool {
+	ac, wa, re := Judge(problem, cmd)
+	result := color.Green.Sprint("AC")
+	if re > 0 {
+		result = color.Red.Sprint("RE")
+	} else if wa > 0 {
+		result = color.Red.Sprint("WA")
+	}
+	fmt.Printf("%s (AC:%d WA:%d RE:%d)\n", result, ac, wa, re)
+	if re == 0 && wa == 0 {
+		return true
+	}
+	return false
 }
 
 func main() {
@@ -197,14 +185,7 @@ func main() {
 						return err
 					}
 				}
-				ac, wa, re := Judge(problem, cmd)
-				result := color.Green.Sprint("AC")
-				if re > 0 {
-					result = color.Red.Sprint("RE")
-				} else if wa > 0 {
-					result = color.Red.Sprint("WA")
-				}
-				fmt.Printf("%s (AC:%d WA:%d RE:%d)\n", result, ac, wa, re)
+				judge(problem, cmd)
 				return nil
 			},
 		},
@@ -285,6 +266,16 @@ func main() {
 				default:
 					return errors.New("goj submit <contest>/<problem> <source_file>")
 				}
+
+				problemName := strings.TrimSuffix(src, lang.Ext)
+				if err := lang.Build(problemName); err != nil {
+					return err
+				}
+				if ac := judge(problemName, lang.GetRunCmd(problemName)); !ac {
+					fmt.Println("interrupted the submission because test failed")
+					return nil
+				}
+
 				if err := SubmitAtCoder(client, contest, problem, src, lang.Name); err != nil {
 					return err
 				}

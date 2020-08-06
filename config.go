@@ -23,7 +23,7 @@ func LoadConfig() (*Config, error) {
 		if err := os.MkdirAll(filepath.Join(configDir, "goj"), 0755); err != nil {
 			return nil, err
 		}
-		if err := ioutil.WriteFile(filepath.Join(configDir, "goj", "config.toml"), []byte(defaultConfigToml), 0666); err != nil {
+		if err := ioutil.WriteFile(filepath.Join(configDir, "goj", "config.toml"), []byte(DefaultConfigToml), 0666); err != nil {
 			return nil, err
 		}
 	}
@@ -34,3 +34,30 @@ func LoadConfig() (*Config, error) {
 	}
 	return &config, nil
 }
+
+const DefaultConfigToml = `default_language = "c++"
+
+[[language]]
+name = "c++"
+ext = ".cpp"
+# [P] : Problem Name
+build_cmd = "g++ -g -o [P] [P].cpp"
+run_cmd = "./[P]"
+template = """#include <bits/stdc++.h>
+
+using namespace std;
+using ll = long long;
+
+int main() {
+  cin.tie(nullptr);
+  ios::sync_with_stdio(false);
+
+  return 0;
+}
+"""
+
+[[language]]
+name = "python"
+ext = ".py"
+run_cmd = "python [P].py"
+`
