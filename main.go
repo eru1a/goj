@@ -6,12 +6,12 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"path"
 	"path/filepath"
 	"sort"
 	"strings"
 	"syscall"
 
-	"github.com/BurntSushi/toml"
 	"github.com/gookit/color"
 	cookiejar "github.com/juju/persistent-cookiejar"
 	"github.com/urfave/cli"
@@ -95,30 +95,8 @@ func getProblem(keyword string, ext string) (string, error) {
 	return strings.TrimSuffix(files2[0].Name(), ext), nil
 }
 
-func getConfig() (*Config, error) {
-	configDir, err := os.UserConfigDir()
-	if err != nil {
-		return nil, err
-	}
-	_, err = os.Stat(filepath.Join(configDir, "goj", "config.toml"))
-	if err != nil {
-		if err := os.MkdirAll(filepath.Join(configDir, "goj"), 0755); err != nil {
-			return nil, err
-		}
-		if err := ioutil.WriteFile(filepath.Join(configDir, "goj", "config.toml"), []byte(defaultConfigToml), 0644); err != nil {
-			return nil, err
-		}
-	}
-	var config Config
-	_, err = toml.DecodeFile(filepath.Join(configDir, "goj", "config.toml"), &config)
-	if err != nil {
-		return nil, err
-	}
-	return &config, nil
-}
-
 func main() {
-	config, err := getConfig()
+	config, err := LoadConfig()
 	if err != nil {
 		panic(err)
 	}
@@ -272,21 +250,45 @@ func main() {
 				},
 			},
 			Action: func(c *cli.Context) error {
-				if len(c.Args()) != 2 {
-					return errors.New("goj submit <contest>/<problem> <source_file>")
+				problems, err := LoadProblems()
+				if err != nil {
+					return err
 				}
 				lang, err := findLang(config.Languages, config.DefaultLanguage, c.String("l"))
 				if err != nil {
 					return err
 				}
-				split := strings.Split(c.Args().Get(0), "/")
-				contest := split[0]
-				problem := split[1]
-				src := c.Args().Get(1)
+				var contest, problem, src string
+				switch len(c.Args()) {
+				case 2:
+					split := strings.Split(c.Args().Get(0), "/")
+					contest = split[0]
+					problem = split[1]
+					src = c.Args().Get(1)
+				case 0:
+					// 最後に編集されたファイルから提出する問題を推測する
+					p, err := getProblem("", lang.Ext)
+					if err != nil {
+						return err
+					}
+					for _, pp := range problems.Problems {
+						if pp.Name == p {
+							contest = strings.TrimSuffix(pp.Name, "_"+strings.ToLower(pp.ID))
+							problem = path.Base(pp.URL)
+							src = p + lang.Ext
+							break
+						}
+					}
+					if contest == "" {
+						return fmt.Errorf("cannot find problem: %s", p)
+					}
+				default:
+					return errors.New("goj submit <contest>/<problem> <source_file>")
+				}
 				if err := SubmitAtCoder(client, contest, problem, src, lang.Name); err != nil {
 					return err
 				}
-				fmt.Println("submit success")
+				fmt.Println("submit success:", contest, problem, src, lang.Name)
 				return nil
 			},
 		},

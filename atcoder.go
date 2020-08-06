@@ -12,6 +12,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/BurntSushi/toml"
 	"github.com/PuerkitoBio/goquery"
 )
 
@@ -21,23 +22,67 @@ type Contest struct {
 	ProblemURLs []string
 }
 
-type Problem struct {
+type TestCase struct {
+	Input  string
+	Output string
+}
+
+type ProblemInfo struct {
 	// 問題名の横にある問題ID
 	// A - Payment だったら"A"
-	ID string
+	ID string `toml:"id"`
 	// 問題の名前
 	// コンテスト名_ID
 	// https://atcoder.jp/contests/abc173/tasks/abc173_aだったら"abc173_a"
 	// https://atcoder.jp/contests/arc077/tasks/arc084_aだったら"arc077_c"
 	// https://atcoder.jp/contests/abc001/tasks/abc001_1だったら"abc001_a"
-	Name      string
-	URL       string
+	Name string `toml:"name"`
+	URL  string `toml:"url"`
+}
+
+type Problem struct {
+	*ProblemInfo
 	TestCases []*TestCase
 }
 
-type TestCase struct {
-	Input  string
-	Output string
+type Problems struct {
+	Problems []*ProblemInfo `toml:"problem"`
+}
+
+func LoadProblems() (*Problems, error) {
+	_, err := os.Stat(".goj.toml")
+	if err != nil {
+		return nil, nil
+	}
+	var problems Problems
+	_, err = toml.DecodeFile(".goj.toml", &problems)
+	if err != nil {
+		return nil, err
+	}
+	return &problems, nil
+}
+
+// ProblemInfoをtomlに追加で保存
+func (p *ProblemInfo) AddTOML() error {
+	var buf bytes.Buffer
+	enc := toml.NewEncoder(&buf)
+	problems := &Problems{[]*ProblemInfo{p}}
+	if err := enc.Encode(problems); err != nil {
+		return err
+	}
+
+	file, err := os.OpenFile(".goj.toml", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	_, err = file.WriteString(buf.String() + "\n")
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func LoginAtCoder(client *http.Client, username, password string) error {
@@ -102,11 +147,11 @@ func (p *Problem) Save() error {
 	for i, testcase := range p.TestCases {
 		// 既にファイルがあった場合は上書きになる
 		if err := ioutil.WriteFile(filepath.Join(dir, fmt.Sprintf("sample-%d.in", i+1)),
-			[]byte(testcase.Input), 0644); err != nil {
+			[]byte(testcase.Input), 0666); err != nil {
 			return err
 		}
 		if err := ioutil.WriteFile(filepath.Join(dir, fmt.Sprintf("sample-%d.out", i+1)),
-			[]byte(testcase.Output), 0644); err != nil {
+			[]byte(testcase.Output), 0666); err != nil {
 			return err
 		}
 	}
@@ -234,11 +279,19 @@ func FetchAtCoderProblem(client *http.Client, contest, problem string) (*Problem
 		return nil, err
 	}
 	name := contest + "_" + strings.ToLower(id)
+
+	problemInfo := &ProblemInfo{
+		ID:   id,
+		Name: name,
+		URL:  url,
+	}
+	if err := problemInfo.AddTOML(); err != nil {
+		panic(err)
+	}
+
 	return &Problem{
-		ID:        id,
-		Name:      name,
-		URL:       url,
-		TestCases: testcases,
+		ProblemInfo: problemInfo,
+		TestCases:   testcases,
 	}, nil
 }
 
