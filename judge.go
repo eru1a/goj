@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
@@ -28,12 +29,12 @@ func CmpOutput(actual, expected string) bool {
 	return true
 }
 
-func Judge(problem string, command string) (ac, wa, re int) {
+func Judge(problem string, command string) (ac, wa, re int, err error) {
 	fmt.Printf("test %s (%s)\n", problem, command)
 	dir := fmt.Sprintf("test_%s", problem)
 	files, err := ioutil.ReadDir(dir)
 	if err != nil {
-		panic(err)
+		return ac, wa, re, err
 	}
 	for _, f := range files {
 		if f.IsDir() {
@@ -48,24 +49,26 @@ func Judge(problem string, command string) (ac, wa, re int) {
 
 		in, err := ioutil.ReadFile(filepath.Join(dir, testName+".in"))
 		if err != nil {
-			panic(err)
+			return ac, wa, re, err
 		}
 
 		out, err := ioutil.ReadFile(filepath.Join(dir, testName+".out"))
 		if err != nil {
-			panic(err)
+			return ac, wa, re, err
 		}
 
 		c := strings.Split(command, " ")
 		cmd := exec.Command(c[0], c[1:]...)
+		cmd.Stderr = os.Stderr
+
 		stdin, err := cmd.StdinPipe()
 		if err != nil {
-			panic(err)
+			return ac, wa, re, err
 		}
 
 		_, err = io.WriteString(stdin, string(in))
 		if err != nil {
-			panic(err)
+			return ac, wa, re, err
 		}
 
 		stdout, err := cmd.Output()
@@ -88,5 +91,5 @@ func Judge(problem string, command string) (ac, wa, re int) {
 			fmt.Println(string(stdout))
 		}
 	}
-	return
+	return ac, wa, re, nil
 }

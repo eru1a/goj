@@ -14,7 +14,7 @@ func TestParseAtCoderContest(t *testing.T) {
 		urls []string
 	}{
 		{
-			file: "testdata/abc001_tasks.html",
+			file: "testdata/abc001_tasks",
 			urls: []string{
 				"https://atcoder.jp/contests/abc001/tasks/abc001_1",
 				"https://atcoder.jp/contests/abc001/tasks/abc001_2",
@@ -23,7 +23,7 @@ func TestParseAtCoderContest(t *testing.T) {
 			},
 		},
 		{
-			file: "testdata/abc173_tasks.html",
+			file: "testdata/abc173_tasks",
 			urls: []string{
 				"https://atcoder.jp/contests/abc173/tasks/abc173_a",
 				"https://atcoder.jp/contests/abc173/tasks/abc173_b",
@@ -38,11 +38,11 @@ func TestParseAtCoderContest(t *testing.T) {
 	for _, test := range tests {
 		f, err := os.Open(test.file)
 		if err != nil {
-			panic(err)
+			t.Fatal(err)
 		}
 		defer f.Close()
 
-		urls, err := ParseAtCoderContest(f)
+		urls, err := ParseContest(f)
 		if err != nil {
 			t.Error(err)
 		}
@@ -59,7 +59,7 @@ func TestParseAtCoderProblem(t *testing.T) {
 		testcases []*TestCase
 	}{
 		{
-			file: "testdata/abc001_1.html",
+			file: "testdata/abc001_1",
 			id:   "A",
 			testcases: []*TestCase{
 				{
@@ -77,7 +77,7 @@ func TestParseAtCoderProblem(t *testing.T) {
 			},
 		},
 		{
-			file: "testdata/abc173_b.html",
+			file: "testdata/abc173_b",
 			id:   "B",
 			testcases: []*TestCase{
 				{
@@ -95,10 +95,10 @@ func TestParseAtCoderProblem(t *testing.T) {
 	for _, test := range tests {
 		f, err := os.Open(test.file)
 		if err != nil {
-			panic(err)
+			t.Fatal(err)
 		}
 		defer f.Close()
-		id, testcases, err := ParseAtCoderProblem(f)
+		id, testcases, err := ParseProblem(f)
 		if err != nil {
 			t.Error(err)
 		}
@@ -107,6 +107,66 @@ func TestParseAtCoderProblem(t *testing.T) {
 		}
 		if !reflect.DeepEqual(testcases, test.testcases) {
 			t.Errorf("[%s] %s", test.file, pretty.Compare(test.testcases, testcases))
+		}
+	}
+}
+
+func TestParseCSRFToken(t *testing.T) {
+	tests := []struct {
+		file string
+		csrf string
+	}{
+		{
+			file: "testdata/login",
+			csrf: "JmExC2cpP04lxScfq2TNW/1o0XDVKQfkJjYW3PEtnHM=",
+		},
+	}
+
+	for _, test := range tests {
+		f, err := os.Open(test.file)
+		if err != nil {
+			t.Fatal(err)
+		}
+		csrf, err := ParseCSRFToken(f)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if csrf != test.csrf {
+			t.Errorf("[%s] want %s, got %s", test.file, test.csrf, csrf)
+		}
+	}
+}
+
+func TestParseLanguageID(t *testing.T) {
+	tests := []struct {
+		lang       string
+		languageID string
+	}{
+		{
+			lang:       "c++",
+			languageID: "4003",
+		},
+		{
+			lang:       "python",
+			languageID: "4006",
+		},
+		{
+			lang:       "go",
+			languageID: "4026",
+		},
+	}
+
+	for _, test := range tests {
+		f, err := os.Open("testdata/submission")
+		if err != nil {
+			t.Fatal(err)
+		}
+		languageID, err := ParseLanguageID(f, "abc174_a", test.lang)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if languageID != test.languageID {
+			t.Errorf("[%s] want %s, got %s", test.lang, test.languageID, languageID)
 		}
 	}
 }

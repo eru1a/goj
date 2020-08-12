@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"net/http"
 	"os"
 	"path/filepath"
 	"sort"
@@ -30,7 +29,7 @@ func findLang(languages []*Language, defaultLang, argLang string) (*Language, er
 	return nil, fmt.Errorf("cannot find %s in languages", langName)
 }
 
-// 拡張子がextでsuffixで終わる最も最近編集されたファイルの名前(問題名)を返す。
+// 拡張子がextでファイルの名前がsuffixで終わる最も最近編集されたファイルを返す。
 func getProblem(suffix string, ext string) (string, error) {
 	files, err := ioutil.ReadDir(".")
 	if err != nil {
@@ -64,7 +63,10 @@ func getProblem(suffix string, ext string) (string, error) {
 }
 
 func judge(problem string, cmd string) bool {
-	ac, wa, re := Judge(problem, cmd)
+	ac, wa, re, err := Judge(problem, cmd)
+	if err != nil {
+		panic(err)
+	}
 	result := color.Green.Sprint("AC")
 	if re > 0 {
 		result = color.Red.Sprint("RE")
@@ -97,7 +99,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	client := &http.Client{Jar: jar}
+	atcoder := NewAtCoder(jar)
 
 	app := cli.NewApp()
 
@@ -133,11 +135,11 @@ func main() {
 				split := strings.Split(contest, "/")
 				switch len(split) {
 				case 1:
-					if err := DownloadAtCoderContest(client, split[0], lang); err != nil {
+					if err := atcoder.DownloadContest(split[0], lang); err != nil {
 						return err
 					}
 				case 2:
-					if err := DownloadAtCoderProblem(client, split[0], split[1], lang); err != nil {
+					if err := atcoder.DownloadProblem(split[0], split[1], lang); err != nil {
 						return err
 					}
 				default:
@@ -152,8 +154,7 @@ func main() {
 			Usage:   "goj test <problem>",
 			Flags: []cli.Flag{
 				cli.StringFlag{
-					Name:  "command, c",
-					Value: "<none>",
+					Name: "command, c",
 				},
 				cli.StringFlag{
 					Name:  "language, l",
@@ -169,12 +170,17 @@ func main() {
 					return err
 				}
 
-				problem, err := getProblem(c.Args().First(), lang.Ext)
+				// -commandが渡されている時は拡張子は考慮しない
+				ext := lang.Ext
+				if c.String("c") != "" {
+					ext = ""
+				}
+				problem, err := getProblem(c.Args().First(), ext)
 				if err != nil {
 					return err
 				}
 				cmd := c.String("c")
-				if cmd == "<none>" {
+				if cmd == "" {
 					cmd = lang.GetRunCmd(problem)
 					if err := lang.Build(problem); err != nil {
 						return err
@@ -204,7 +210,7 @@ func main() {
 					return err
 				}
 				password := string(bytes)
-				if err := LoginAtCoder(client, username, password); err != nil {
+				if err := atcoder.Login(username, password); err != nil {
 					return err
 				}
 				if err := jar.Save(); err != nil {
@@ -223,6 +229,10 @@ func main() {
 				cli.StringFlag{
 					Name:  "language, l",
 					Value: "c++",
+				},
+				cli.BoolFlag{
+					Name:  "force, f",
+					Usage: "skip tests",
 				},
 			},
 			Action: func(c *cli.Context) error {
@@ -264,15 +274,17 @@ func main() {
 					return errors.New("goj submit <contest>/<problem> <source_file>")
 				}
 
-				if err := lang.Build(problem); err != nil {
-					return err
-				}
-				if ac := judge(problem, lang.GetRunCmd(problem)); !ac {
-					fmt.Println("interrupted the submission because test failed")
-					return nil
+				if !c.Bool("f") {
+					if err := lang.Build(problem); err != nil {
+						return err
+					}
+					if ac := judge(problem, lang.GetRunCmd(problem)); !ac {
+						fmt.Println("interrupted the submission because test failed")
+						return nil
+					}
 				}
 
-				if err := SubmitAtCoder(client, contest, problem, src, lang.Name); err != nil {
+				if err := atcoder.Submit(contest, problem, src, lang.Name); err != nil {
 					return fmt.Errorf("%v: submit failed (%s, %s, %s, %s)", err, contest, problem, src, lang.Name)
 				}
 				fmt.Println("submit success:", contest, problem, src, lang.Name)
