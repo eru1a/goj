@@ -41,7 +41,7 @@ const DefaultConfigToml = `default_language = "c++"
 name = "c++"
 ext = ".cpp"
 # [P] : Problem Name
-build_cmd = "g++ -fdiagnostics-color=always -g -o [P] [P].cpp"
+build_cmd = "g++ -std=c++17 -fdiagnostics-color=always -g -o [P] [P].cpp"
 run_cmd = "./[P]"
 template = """#include <bits/stdc++.h>
 

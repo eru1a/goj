@@ -1,0 +1,24 @@
+[[problem]]
+  id = "A"
+  name = "abc003_1"
+  contest = "abc003"
+  url = "https://atcoder.jp/contests/abc003/tasks/abc003_1"
+
+[[problem]]
+  id = "B"
+  name = "abc003_2"
+  contest = "abc003"
+  url = "https://atcoder.jp/contests/abc003/tasks/abc003_2"
+
+[[problem]]
+  id = "C"
+  name = "abc003_3"
+  contest = "abc003"
+  url = "https://atcoder.jp/contests/abc003/tasks/abc003_3"
+
+[[problem]]
+  id = "D"
+  name = "abc003_4"
+  contest = "abc003"
+  url = "https://atcoder.jp/contests/abc003/tasks/abc003_4"
+

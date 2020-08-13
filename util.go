@@ -6,6 +6,9 @@ import (
 )
 
 func makeTemplateFile(problem string, lang *Language) error {
+	if lang == nil {
+		return nil
+	}
 	file := problem + lang.Ext
 	// ファイルがある場合は何もしない
 	if _, err := os.Stat(file); err != nil {
