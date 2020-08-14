@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"os/exec"
 	"strings"
@@ -20,7 +19,7 @@ func (l *Language) Build(problem string) error {
 		return nil
 	}
 	buildCmd := strings.ReplaceAll(l.BuildCmd, "[P]", problem)
-	fmt.Println(buildCmd)
+	LogInfo(buildCmd)
 	c := strings.Split(buildCmd, " ")
 	cmd := exec.Command(c[0], c[1:]...)
 	cmd.Stderr = os.Stderr

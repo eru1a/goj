@@ -37,8 +37,6 @@ func NewLoginCmd(atcoder *AtCoder, jar *cookiejar.Jar, config *Config) cli.Comma
 			if err := jar.Save(); err != nil {
 				return err
 			}
-
-			fmt.Println("login success")
 			return nil
 		},
 	}

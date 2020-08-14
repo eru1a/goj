@@ -71,7 +71,6 @@ func (a *AtCoder) DownloadProblem(contest, problem string, lang *Language) error
 
 func (a *AtCoder) FetchContest(contest string) (*Contest, error) {
 	url := fmt.Sprintf("%s/contests/%s/tasks", ATCODER_BASE_URL, contest)
-	fmt.Printf("fetch %s\n", url)
 
 	res, err := a.Client.Get(url)
 	if err != nil {
@@ -98,16 +97,17 @@ func (a *AtCoder) FetchProblemFromURL(url string) (*Problem, error) {
 
 func (a *AtCoder) FetchProblem(contest, problem string) (*Problem, error) {
 	url := fmt.Sprintf("%s/contests/%s/tasks/%s", ATCODER_BASE_URL, contest, problem)
-	fmt.Printf("fetch %s\n", url)
 
 	res, err := a.Client.Get(url)
 	if err != nil {
 		return nil, err
 	}
 	defer res.Body.Close()
+	LogSuccess("fetched %s", url)
 
 	id, testcases, err := ParseProblem(res.Body)
 	if err != nil {
+		LogFailure("failed to parse problem's testcase: url %s", url)
 		return nil, err
 	}
 
@@ -118,7 +118,7 @@ func (a *AtCoder) FetchProblem(contest, problem string) (*Problem, error) {
 		URL:     url,
 	}
 	if err := problemInfo.AddTOML(); err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	return &Problem{
@@ -157,15 +157,16 @@ func (a *AtCoder) Login(username, password string) error {
 
 	fail := doc.Find("div.alert-danger")
 	if len(fail.Nodes) != 0 {
-		return errors.New("login failed")
+		return errors.New("div.alert-danger found")
 	}
 
 	success := doc.Find("div.alert-success")
 	if len(success.Nodes) != 0 {
+		LogSuccess("login success")
 		return nil
 	}
 
-	return errors.New("unknown login error")
+	return errors.New("couldn't find div.alert-danger or div.alert-success")
 }
 
 func (a *AtCoder) Submit(contest, problem string, srcPath string, lang string) error {
@@ -207,6 +208,8 @@ func (a *AtCoder) Submit(contest, problem string, srcPath string, lang string) e
 		return err
 	}
 	defer post.Body.Close()
+
+	LogSuccess("submit %s/%s %s(%s)", contest, problem, srcPath, lang)
 
 	return nil
 }

@@ -2,16 +2,14 @@ package main
 
 import (
 	"io/ioutil"
+	"log"
 	"os"
 	"testing"
-
-	"github.com/gookit/color"
 )
 
 func TestJudge(t *testing.T) {
-	os.Stdout = nil
 	os.Stderr = nil
-	color.SetOutput(ioutil.Discard)
+	log.SetOutput(ioutil.Discard)
 
 	if err := os.Chdir("testdata"); err != nil {
 		panic(err)

@@ -30,7 +30,7 @@ func CmpOutput(actual, expected string) bool {
 }
 
 func Judge(problem string, command string) (ac, wa, re int, err error) {
-	fmt.Printf("test %s (%s)\n", problem, command)
+	LogInfo("test %s (%s)", problem, command)
 	dir := fmt.Sprintf("test_%s", problem)
 	files, err := ioutil.ReadDir(dir)
 	if err != nil {
@@ -45,15 +45,17 @@ func Judge(problem string, command string) (ac, wa, re int, err error) {
 		}
 
 		testName := strings.TrimSuffix(f.Name(), ".in")
-		fmt.Print(fmt.Sprintf("%s ... ", testName))
+		LogInfo(testName)
 
 		in, err := ioutil.ReadFile(filepath.Join(dir, testName+".in"))
 		if err != nil {
+			LogFailure("cannot find %s.in", filepath.Join(dir, testName))
 			return ac, wa, re, err
 		}
 
 		out, err := ioutil.ReadFile(filepath.Join(dir, testName+".out"))
 		if err != nil {
+			LogFailure("cannot find %s.out", filepath.Join(dir, testName))
 			return ac, wa, re, err
 		}
 
@@ -74,21 +76,21 @@ func Judge(problem string, command string) (ac, wa, re int, err error) {
 		stdout, err := cmd.Output()
 		if err != nil {
 			re++
-			color.Red.Println("RE")
-			fmt.Printf("  %s\n", err)
+			LogFailure(color.Red.Sprint("RE"))
+			LogEmit("  %s\n", err)
 			continue
 		}
 
 		if CmpOutput(string(stdout), string(out)) {
 			ac++
-			color.Green.Println("AC")
+			LogSuccess(color.Green.Sprint("AC"))
 		} else {
 			wa++
-			color.Red.Println("WA")
-			color.Bold.Println("\nexpected:")
-			fmt.Println(string(out))
-			color.Bold.Println("got:")
-			fmt.Println(string(stdout))
+			LogFailure(color.Red.Sprint("WA"))
+			LogEmit("expected:")
+			LogEmit(color.Bold.Sprint(string(out)))
+			LogEmit("got:")
+			LogEmit(color.Bold.Sprint(string(stdout)))
 		}
 	}
 	return ac, wa, re, nil

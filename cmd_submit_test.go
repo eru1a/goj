@@ -2,6 +2,8 @@ package main
 
 import (
 	"errors"
+	"io/ioutil"
+	"log"
 	"os"
 	"reflect"
 	"strings"
@@ -12,6 +14,9 @@ import (
 )
 
 func TestParseSubmitmCmdArgs(t *testing.T) {
+	os.Stderr = nil
+	log.SetOutput(ioutil.Discard)
+
 	if err := os.Chdir("testdata/abc003"); err != nil {
 		panic(err)
 	}

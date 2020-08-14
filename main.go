@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 	"sort"
@@ -58,6 +59,8 @@ func getProblem(suffix string, ext string) (string, error) {
 }
 
 func main() {
+	log.SetFlags(0)
+
 	config, err := LoadConfig()
 	if err != nil {
 		panic(err)
@@ -88,6 +91,7 @@ func main() {
 	}
 
 	if err := app.Run(os.Args); err != nil {
-		panic(err)
+		LogFailure(err.Error())
+		os.Exit(1)
 	}
 }

@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/gookit/color"
 	"github.com/urfave/cli"
@@ -19,7 +18,7 @@ func judge(problem string, cmd string) bool {
 	} else if wa > 0 {
 		result = color.Red.Sprint("WA")
 	}
-	fmt.Printf("%s (AC:%d WA:%d RE:%d)\n", result, ac, wa, re)
+	LogEmit("%s (AC:%d WA:%d RE:%d)", result, ac, wa, re)
 	if re == 0 && wa == 0 {
 		return true
 	}

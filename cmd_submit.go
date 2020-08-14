@@ -58,7 +58,7 @@ func NewSubmitCmd(atcoder *AtCoder, config *Config) cli.Command {
 					return err
 				}
 				if ac := judge(problem, lang.GetRunCmd(problem)); !ac {
-					fmt.Println("interrupted the submission because test failed")
+					LogFailure("interrupted the submission because test failed")
 					return nil
 				}
 			}
@@ -67,7 +67,6 @@ func NewSubmitCmd(atcoder *AtCoder, config *Config) cli.Command {
 			if err := atcoder.Submit(contest, problem, src, lang.Name); err != nil {
 				return fmt.Errorf("%v: submit failed (%s, %s, %s, %s)", err, contest, problem, src, lang.Name)
 			}
-			fmt.Println("submit success:", contest, problem, src, lang.Name)
 			return nil
 		},
 	}
