@@ -152,3 +152,28 @@ func ParseLanguageID(r io.Reader, problem string, lang string) (string, error) {
 	}
 	return id, nil
 }
+
+func ParseSubmissionsStatus(r io.Reader) ([]*SubmissionStatus, error) {
+	doc, err := goquery.NewDocumentFromReader(r)
+	if err != nil {
+		return nil, err
+	}
+
+	var submissions []*SubmissionStatus
+
+	doc.Find("table > tbody > tr").Each(func(_ int, s *goquery.Selection) {
+		submissions = append(submissions, &SubmissionStatus{
+			Date:       s.Find("td:nth-child(1)").Text(),
+			Problem:    s.Find("td:nth-child(2)").Text(),
+			User:       s.Find("td:nth-child(3)").Text(),
+			Language:   s.Find("td:nth-child(4)").Text(),
+			Score:      s.Find("td:nth-child(5)").Text(),
+			CodeLength: s.Find("td:nth-child(6)").Text(),
+			Result:     s.Find("td:nth-child(7)").Text(),
+			RunTime:    strings.TrimSpace(s.Find("td:nth-child(8)").Text()),
+			Memory:     s.Find("td:nth-child(9)").Text(),
+		})
+	})
+
+	return submissions, nil
+}

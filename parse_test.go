@@ -157,7 +157,7 @@ func TestParseLanguageID(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		f, err := os.Open("testdata/submission")
+		f, err := os.Open("testdata/submit")
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -167,6 +167,99 @@ func TestParseLanguageID(t *testing.T) {
 		}
 		if languageID != test.languageID {
 			t.Errorf("[%s] want %s, got %s", test.lang, test.languageID, languageID)
+		}
+	}
+}
+
+func TestParseSubmissionsStatus(t *testing.T) {
+	tests := []struct {
+		file   string
+		status []*SubmissionStatus
+	}{
+		{
+			file: "testdata/submissions",
+			status: []*SubmissionStatus{
+				{
+					Date:       "2020-08-15 18:30:10+0900",
+					Problem:    "A - 積雪深差",
+					User:       "eru1a ",
+					Language:   "C++ (GCC 9.2.1)",
+					Score:      "0",
+					CodeLength: "138 Byte",
+					Result:     "TLE",
+					RunTime:    "2205 ms",
+					Memory:     "3292 KB",
+				},
+				{
+					Date:       "2020-08-15 18:29:23+0900",
+					Problem:    "A - 積雪深差",
+					User:       "eru1a ",
+					Language:   "C++ (GCC 9.2.1)",
+					Score:      "0",
+					CodeLength: "115 Byte",
+					Result:     "WA",
+					RunTime:    "6 ms",
+					Memory:     "3632 KB",
+				},
+				{
+					Date:       "2020-08-15 18:29:10+0900",
+					Problem:    "A - 積雪深差",
+					User:       "eru1a ",
+					Language:   "C++ (GCC 9.2.1)",
+					Score:      "100",
+					CodeLength: "119 Byte",
+					Result:     "AC",
+					RunTime:    "6 ms",
+					Memory:     "3584 KB",
+				},
+				{
+					Date:       "2020-08-15 18:28:45+0900",
+					Problem:    "A - 積雪深差",
+					User:       "eru1a ",
+					Language:   "C++ (GCC 9.2.1)",
+					Score:      "0",
+					CodeLength: "97 Byte",
+					Result:     "CE",
+					RunTime:    "Detail",
+					Memory:     "",
+				},
+				{
+					Date:       "2020-05-30 08:33:40+0900",
+					Problem:    "B - 視程の通報",
+					User:       "eru1a ",
+					Language:   "Rust (1.15.1)",
+					Score:      "100",
+					CodeLength: "1511 Byte",
+					Result:     "AC",
+					RunTime:    "2 ms",
+					Memory:     "4352 KB",
+				},
+				{
+					Date:       "2020-05-30 08:33:30+0900",
+					Problem:    "A - 積雪深差",
+					User:       "eru1a ",
+					Language:   "Rust (1.15.1)",
+					Score:      "100",
+					CodeLength: "1197 Byte",
+					Result:     "AC",
+					RunTime:    "2 ms",
+					Memory:     "4352 KB",
+				},
+			},
+		},
+	}
+
+	for _, test := range tests {
+		f, err := os.Open(test.file)
+		if err != nil {
+			t.Fatal(err)
+		}
+		status, err := ParseSubmissionsStatus(f)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !reflect.DeepEqual(status, test.status) {
+			t.Errorf(pretty.Compare(test.status, status))
 		}
 	}
 }

@@ -13,7 +13,8 @@ import (
 	"github.com/urfave/cli"
 )
 
-func findLang(languages []*Language, langName, argLang string) (*Language, error) {
+func findLang(languages []*Language, defaultLang, argLang string) (*Language, error) {
+	langName := defaultLang
 	if argLang != "" {
 		langName = argLang
 	}
@@ -22,7 +23,7 @@ func findLang(languages []*Language, langName, argLang string) (*Language, error
 			return l, nil
 		}
 	}
-	return nil, fmt.Errorf("cannot find %s in languages", langName)
+	return nil, fmt.Errorf("cannot find %s in languages", defaultLang)
 }
 
 // 拡張子がextでファイルの名前がsuffixで終わる最も最近編集されたファイルを返す。
@@ -88,6 +89,7 @@ func main() {
 		NewTestCmd(config),
 		NewLoginCmd(atcoder, jar, config),
 		NewSubmitCmd(atcoder, config),
+		NewStatusCmd(atcoder),
 	}
 
 	if err := app.Run(os.Args); err != nil {

@@ -213,3 +213,17 @@ func (a *AtCoder) Submit(contest, problem string, srcPath string, lang string) e
 
 	return nil
 }
+
+func (a *AtCoder) SubmissionsStatus(contest string) ([]*SubmissionStatus, error) {
+	submissionsURL := fmt.Sprintf("%s/contests/%s/submissions/me", ATCODER_BASE_URL, contest)
+	res, err := a.Client.Get(submissionsURL)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+	status, err := ParseSubmissionsStatus(res.Body)
+	if err != nil {
+		return nil, err
+	}
+	return status, nil
+}

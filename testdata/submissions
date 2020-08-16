@@ -1,0 +1,627 @@
+
+
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>All Submissions - AtCoder Beginner Contest 001</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta http-equiv="Content-Language" content="en">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0">
+	<meta name="format-detection" content="telephone=no">
+	<meta name="google-site-verification" content="nXGC_JxO0yoP1qBzMnYD_xgufO6leSLw1kyNo2HZltM" />
+
+	
+	<meta name="description" content="AtCoder is a programming contest site for anyone from beginners to experts. We hold weekly programming contests online.">
+	<meta name="author" content="AtCoder Inc.">
+
+	<meta property="og:site_name" content="AtCoder">
+	
+	<meta property="og:title" content="All Submissions - AtCoder Beginner Contest 001" />
+	<meta property="og:description" content="AtCoder is a programming contest site for anyone from beginners to experts. We hold weekly programming contests online." />
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content="https://atcoder.jp/contests/abc001/submissions?f.User=eru1a" />
+	<meta property="og:image" content="https://img.atcoder.jp/assets/atcoder.png" />
+	<meta name="twitter:card" content="summary" />
+	<meta name="twitter:site" content="@atcoder" />
+	
+	<meta property="twitter:title" content="All Submissions - AtCoder Beginner Contest 001" />
+
+	<link href="//fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" type="text/css" href="//img.atcoder.jp/public/3293349/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="//img.atcoder.jp/public/3293349/css/base.css">
+	<link rel="shortcut icon" type="image/png" href="//img.atcoder.jp/assets/favicon.png">
+	<link rel="apple-touch-icon" href="//img.atcoder.jp/assets/atcoder.png">
+	<script src="//img.atcoder.jp/public/3293349/js/lib/jquery-1.9.1.min.js"></script>
+	<script src="//img.atcoder.jp/public/3293349/js/lib/bootstrap.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/js-cookie/2.1.4/js.cookie.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/locale/ja.js"></script>
+	<script>
+		var LANG = "en";
+		var userScreenName = "";
+		var csrfToken = "p2YkaUBZ5uIZZMVNKW8VNT+V2EJACF1dUmmgS6/5oMQ="
+	</script>
+	<script src="//img.atcoder.jp/public/3293349/js/utils.js"></script>
+	
+	
+		<script src="//img.atcoder.jp/public/3293349/js/contest.js"></script>
+		<link href="//img.atcoder.jp/public/3293349/css/contest.css" rel="stylesheet" />
+		<script>
+			var contestScreenName = "abc001";
+			var remainingText = "Remaining Time";
+			var countDownText = "Contest begins in";
+			var startTime = moment("2013-10-12T21:00:00+09:00");
+			var endTime = moment("2013-10-12T23:00:00+09:00");
+		</script>
+		<style></style>
+	
+	
+	
+		<link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
+		<link href="//cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-theme/0.1.0-beta.10/select2-bootstrap.min.css" rel="stylesheet" />
+		<script src="//img.atcoder.jp/public/3293349/js/lib/select2.min.js"></script>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<script src="//img.atcoder.jp/public/3293349/js/base.js"></script>
+	<script src="//img.atcoder.jp/public/3293349/js/ga.js"></script>
+</head>
+
+<body>
+
+<script type="text/javascript">
+	var __pParams = __pParams || [];
+	__pParams.push({client_id: '468', c_1: 'atcodercontest', c_2: 'ClientSite'});
+</script>
+<script type="text/javascript" src="https://cdn.d2-apps.net/js/tr.js" async></script>
+
+
+<div id="modal-contest-start" class="modal fade" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">Contest started</h4>
+			</div>
+			<div class="modal-body">
+				<p>AtCoder Beginner Contest 001 has begun.</p>
+			</div>
+			<div class="modal-footer">
+				
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				
+			</div>
+		</div>
+	</div>
+</div>
+<div id="modal-contest-end" class="modal fade" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">Contest is over</h4>
+			</div>
+			<div class="modal-body">
+				<p>AtCoder Beginner Contest 001 has ended.</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="main-div" class="float-container">
+
+
+	<nav class="navbar navbar-inverse navbar-fixed-top">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false">
+					<span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="/home"></a>
+			</div>
+			<div class="collapse navbar-collapse" id="navbar-collapse">
+				<ul class="nav navbar-nav">
+				
+					<li><a class="contest-title" href="/contests/abc001">AtCoder Beginner Contest 001</a></li>
+				
+				</ul>
+				<ul class="nav navbar-nav navbar-right">
+					
+					<li class="dropdown">
+						<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+							<img src='//img.atcoder.jp/assets/top/img/flag-lang/en.png'> English <span class="caret"></span>
+						</a>
+						<ul class="dropdown-menu">
+							<li><a href="/contests/abc001/submissions?f.User=eru1a&amp;lang=ja"><img src='//img.atcoder.jp/assets/top/img/flag-lang/ja.png'> 日本語</a></li>
+							<li><a href="/contests/abc001/submissions?f.User=eru1a&amp;lang=en"><img src='//img.atcoder.jp/assets/top/img/flag-lang/en.png'> English</a></li>
+						</ul>
+					</li>
+					
+					
+						<li><a href="/register?continue=https%3A%2F%2Fatcoder.jp%2Fcontests%2Fabc001%2Fsubmissions%3Ff.User%3Deru1a">Sign Up</a></li>
+						<li><a href="/login?continue=https%3A%2F%2Fatcoder.jp%2Fcontests%2Fabc001%2Fsubmissions%3Ff.User%3Deru1a">Sign In</a></li>
+					
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<form method="POST" name="form_logout" action="/logout?continue=https%3A%2F%2Fatcoder.jp%2Fcontests%2Fabc001%2Fsubmissions%3Ff.User%3Deru1a">
+		<input type="hidden" name="csrf_token" value="p2YkaUBZ5uIZZMVNKW8VNT&#43;V2EJACF1dUmmgS6/5oMQ=" />
+	</form>
+	<div id="main-container" class="container"
+		 	style="padding-top:50px;">
+		
+
+<div class="row">
+	<div id="contest-nav-tabs" class="col-sm-12 mb-2 cnvtb-fixed">
+	<div>
+		<small class="contest-duration">
+			
+				Contest Duration:
+				<a href='http://www.timeanddate.com/worldclock/fixedtime.html?iso=20131012T2100&p1=248' target='blank'><time class='fixtime fixtime-full'>2013-10-12 21:00:00+0900</time></a> ~ <a href='http://www.timeanddate.com/worldclock/fixedtime.html?iso=20131012T2300&p1=248' target='blank'><time class='fixtime fixtime-full'>2013-10-12 23:00:00+0900</time></a> (local time)
+				(120 minutes)
+			
+		</small>
+		<small class="back-to-home pull-right"><a href="/home">Back to Home</a></small>
+	</div>
+	<ul class="nav nav-tabs">
+		<li><a href="/contests/abc001"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> Top</a></li>
+		
+			<li><a href="/contests/abc001/tasks"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span> Tasks</a></li>
+		
+
+		
+			<li><a href="/contests/abc001/clarifications"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> Clarifications <span id="clar-badge" class="badge"></span></a></li>
+		
+
+		
+
+		
+			<li class="active">
+				<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-list" aria-hidden="true"></span> Results<span class="caret"></span></a>
+				<ul class="dropdown-menu">
+					<li><a href="/contests/abc001/submissions"><span class="glyphicon glyphicon-globe" aria-hidden="true"></span> All Submissions</a></li>
+					
+				</ul>
+			</li>
+		
+
+		
+			
+				
+					<li><a href="/contests/abc001/standings"><span class="glyphicon glyphicon-sort-by-attributes-alt" aria-hidden="true"></span> Standings</a></li>
+				
+			
+				
+					<li><a href="/contests/abc001/standings/virtual"><span class="glyphicon glyphicon-sort-by-attributes-alt" aria-hidden="true"></span> Virtual Standings</a></li>
+				
+			
+		
+
+		
+
+		
+			<li><a href="/contests/abc001/editorial"><span class="glyphicon glyphicon-book" aria-hidden="true"></span> Editorial</a></li>
+		
+		
+			
+			
+		
+
+		<li class="pull-right"><a id="fix-cnvtb" href="javascript:void(0)"><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span></a></li>
+	</ul>
+</div>
+	<div class="col-sm-12">
+	<ul class="nav nav-pills small">
+		
+			<li class="active"><a href="/contests/abc001/submissions">All Submissions</a></li>
+		
+		
+	</ul>
+</div>
+
+	<div class="col-sm-12">
+		<h2>All Submissions</h2>
+		<hr>
+		<script>var submissionAPI = "/contests/abc001/submissions/status/json";</script>
+		
+<div class="panel panel-default panel-submission">
+	<div class="panel-heading">
+		<form class="form-inline form-filter" action="/contests/abc001/submissions">
+			
+			<div class="form-group form-group-sm">
+				<label for="select-task">Task: </label>
+				<select id="select-task" class="form-control" style="width:240px" data-placeholder="-" data-allow-clear="true" name="f.Task">
+					<option></option>
+					
+						<option value="abc001_1">A - 積雪深差</option>
+					
+						<option value="abc001_2">B - 視程の通報</option>
+					
+						<option value="abc001_3">C - 風力観測</option>
+					
+						<option value="abc001_4">D - 感雨時刻の整理</option>
+					
+				</select>
+			</div>
+			
+			
+			<div class="form-group form-group-sm">
+				<label for="select-language">Language: </label>
+				<select id="select-language" class="form-control" data-placeholder="-" data-allow-clear="true" name="f.Language">
+					<option></option>
+					
+						<option value="4001">C (GCC 9.2.1)</option>
+					
+						<option value="4002">C (Clang 10.0.0)</option>
+					
+						<option value="4003">C&#43;&#43; (GCC 9.2.1)</option>
+					
+						<option value="4004">C&#43;&#43; (Clang 10.0.0)</option>
+					
+						<option value="4005">Java (OpenJDK 11.0.6)</option>
+					
+						<option value="4006">Python (3.8.2)</option>
+					
+						<option value="4007">Bash (5.0.11)</option>
+					
+						<option value="4008">bc (1.07.1)</option>
+					
+						<option value="4009">Awk (GNU Awk 4.1.4)</option>
+					
+						<option value="4010">C# (.NET Core 3.1.201)</option>
+					
+						<option value="4011">C# (Mono-mcs 6.8.0.105)</option>
+					
+						<option value="4012">C# (Mono-csc 3.5.0)</option>
+					
+						<option value="4013">Clojure (1.10.1.536)</option>
+					
+						<option value="4014">Crystal (0.33.0)</option>
+					
+						<option value="4015">D (DMD 2.091.0)</option>
+					
+						<option value="4016">D (GDC 9.2.1)</option>
+					
+						<option value="4017">D (LDC 1.20.1)</option>
+					
+						<option value="4018">Dart (2.7.2)</option>
+					
+						<option value="4019">dc (1.4.1)</option>
+					
+						<option value="4020">Erlang (22.3)</option>
+					
+						<option value="4021">Elixir (1.10.2)</option>
+					
+						<option value="4022">F# (.NET Core 3.1.201)</option>
+					
+						<option value="4023">F# (Mono 10.2.3)</option>
+					
+						<option value="4024">Forth (gforth 0.7.3)</option>
+					
+						<option value="4025">Fortran(GNU Fortran 9.2.1)</option>
+					
+						<option value="4026">Go (1.14.1)</option>
+					
+						<option value="4027">Haskell (GHC 8.8.3)</option>
+					
+						<option value="4028">Haxe (4.0.3); js</option>
+					
+						<option value="4029">Haxe (4.0.3); Java</option>
+					
+						<option value="4030">JavaScript (Node.js 12.16.1)</option>
+					
+						<option value="4031">Julia (1.4.0)</option>
+					
+						<option value="4032">Kotlin (1.3.71)</option>
+					
+						<option value="4033">Lua (Lua 5.3.5)</option>
+					
+						<option value="4034">Lua (LuaJIT 2.1.0)</option>
+					
+						<option value="4035">Dash (0.5.8)</option>
+					
+						<option value="4036">Nim (1.0.6)</option>
+					
+						<option value="4037">Objective-C (Clang 10.0.0)</option>
+					
+						<option value="4038">Common Lisp (SBCL 2.0.3)</option>
+					
+						<option value="4039">OCaml (4.10.0)</option>
+					
+						<option value="4040">Octave (5.2.0)</option>
+					
+						<option value="4041">Pascal (FPC 3.0.4)</option>
+					
+						<option value="4042">Perl (5.26.1)</option>
+					
+						<option value="4043">Raku (Rakudo 2020.02.1)</option>
+					
+						<option value="4044">PHP (7.4.4)</option>
+					
+						<option value="4045">Prolog (SWI-Prolog 8.0.3)</option>
+					
+						<option value="4046">PyPy2 (7.3.0)</option>
+					
+						<option value="4047">PyPy3 (7.3.0)</option>
+					
+						<option value="4048">Racket (7.6)</option>
+					
+						<option value="4049">Ruby (2.7.1)</option>
+					
+						<option value="4050">Rust (1.42.0)</option>
+					
+						<option value="4051">Scala (2.13.1)</option>
+					
+						<option value="4052">Java (OpenJDK 1.8.0)</option>
+					
+						<option value="4053">Scheme (Gauche 0.9.9)</option>
+					
+						<option value="4054">Standard ML (MLton 20130715)</option>
+					
+						<option value="4055">Swift (5.2.1)</option>
+					
+						<option value="4056">Text (cat 8.28)</option>
+					
+						<option value="4057">TypeScript (3.8)</option>
+					
+						<option value="4058">Visual Basic (.NET Core 3.1.101)</option>
+					
+						<option value="4059">Zsh (5.4.2)</option>
+					
+						<option value="4060">COBOL - Fixed (OpenCOBOL 1.1.0)</option>
+					
+						<option value="4061">COBOL - Free (OpenCOBOL 1.1.0)</option>
+					
+						<option value="4062">Brainfuck (bf 20041219)</option>
+					
+						<option value="4063">Ada2012 (GNAT 9.2.1)</option>
+					
+						<option value="4064">Unlambda (2.0.0)</option>
+					
+						<option value="4065">Cython (0.29.16)</option>
+					
+						<option value="4066">Sed (4.4)</option>
+					
+						<option value="4067">Vim (8.2.0460)</option>
+					
+				</select>
+			</div>
+			
+			
+			<div class="form-group form-group-sm">
+				<label for="select-status">Status: </label>
+				<select id="select-status" class="form-control" style="width:80px;" data-placeholder="-" data-allow-clear="true" name="f.Status">
+					<option></option>
+					
+						<option value="AC">AC</option>
+					
+						<option value="WA">WA</option>
+					
+						<option value="TLE">TLE</option>
+					
+						<option value="MLE">MLE</option>
+					
+						<option value="RE">RE</option>
+					
+						<option value="CE">CE</option>
+					
+						<option value="QLE">QLE</option>
+					
+						<option value="OLE">OLE</option>
+					
+						<option value="IE">IE</option>
+					
+						<option value="WJ">WJ</option>
+					
+						<option value="WR">WR</option>
+					
+						<option value="Judging">Judging</option>
+					
+				</select>
+			</div>
+			
+			
+			<div class="form-group form-group-sm">
+				<label for="input-user">User: </label>
+				<input type="text" id="input-user" class="form-control" name="f.User" value="eru1a">
+			</div>
+			
+			<div class="form-group">
+				<div>
+					<a class="btn btn-link btn-xs" href="/contests/abc001/submissions">Reset</a>
+					<button type="submit" class="btn btn-primary btn-sm">Search</button>
+				</div>
+			</div>
+		</form>
+	</div>
+
+	
+		<div class="table-responsive">
+			<table class="table table-bordered table-striped small th-center">
+				<thead>
+				<tr>
+					
+					<th width="12%"><a href="/contests/abc001/submissions?desc=true&amp;f.User=eru1a&amp;orderBy=created">Submission Time</a></th>
+					<th>Task</th>
+					<th>User</th>
+					<th>Language</th>
+					<th width="5%"><a href="/contests/abc001/submissions?desc=true&amp;f.User=eru1a&amp;orderBy=score">Score</a></th>
+					<th width="9%"><a href="/contests/abc001/submissions?f.User=eru1a&amp;orderBy=source_length">Code Size</a></th>
+					<th width="5%">Status</th>
+					<th width="7%"><a href="/contests/abc001/submissions?f.User=eru1a&amp;orderBy=time_consumption">Exec Time</a></th>
+					<th width="8%"><a href="/contests/abc001/submissions?f.User=eru1a&amp;orderBy=memory_consumption">Memory</a></th>
+					<th width="5%"></th>
+				</tr>
+				</thead>
+				<tbody>
+				
+					<tr>
+						
+						<td class="no-break"><time class='fixtime fixtime-second'>2020-08-15 18:30:10+0900</time></td>
+						<td><a href="/contests/abc001/tasks/abc001_1">A - 積雪深差</a></td>
+						<td><a href="/users/eru1a">eru1a</a> <a href='/contests/abc001/submissions?f.User=eru1a'><span class='glyphicon glyphicon-search black' aria-hidden='true' data-toggle='tooltip' title='view eru1a's submissions'></span></a></td>
+						<td>C&#43;&#43; (GCC 9.2.1)</td>
+						<td class="text-right submission-score" data-id="15903812">0</td>
+						<td class="text-right">138 Byte</td>
+						<td class='text-center'><span class='label label-warning' aria-hidden='true' data-toggle='tooltip' data-placement='top' title="Time Limit Exceeded">TLE</span></td><td class='text-right'>2205 ms</td><td class='text-right'>3292 KB</td>
+						<td class="text-center">
+							<a href="/contests/abc001/submissions/15903812">Detail</a>
+						</td>
+					</tr>
+				
+					<tr>
+						
+						<td class="no-break"><time class='fixtime fixtime-second'>2020-08-15 18:29:23+0900</time></td>
+						<td><a href="/contests/abc001/tasks/abc001_1">A - 積雪深差</a></td>
+						<td><a href="/users/eru1a">eru1a</a> <a href='/contests/abc001/submissions?f.User=eru1a'><span class='glyphicon glyphicon-search black' aria-hidden='true' data-toggle='tooltip' title='view eru1a's submissions'></span></a></td>
+						<td>C&#43;&#43; (GCC 9.2.1)</td>
+						<td class="text-right submission-score" data-id="15903794">0</td>
+						<td class="text-right">115 Byte</td>
+						<td class='text-center'><span class='label label-warning' aria-hidden='true' data-toggle='tooltip' data-placement='top' title="Wrong Answer">WA</span></td><td class='text-right'>6 ms</td><td class='text-right'>3632 KB</td>
+						<td class="text-center">
+							<a href="/contests/abc001/submissions/15903794">Detail</a>
+						</td>
+					</tr>
+				
+					<tr>
+						
+						<td class="no-break"><time class='fixtime fixtime-second'>2020-08-15 18:29:10+0900</time></td>
+						<td><a href="/contests/abc001/tasks/abc001_1">A - 積雪深差</a></td>
+						<td><a href="/users/eru1a">eru1a</a> <a href='/contests/abc001/submissions?f.User=eru1a'><span class='glyphicon glyphicon-search black' aria-hidden='true' data-toggle='tooltip' title='view eru1a's submissions'></span></a></td>
+						<td>C&#43;&#43; (GCC 9.2.1)</td>
+						<td class="text-right submission-score" data-id="15903787">100</td>
+						<td class="text-right">119 Byte</td>
+						<td class='text-center'><span class='label label-success' aria-hidden='true' data-toggle='tooltip' data-placement='top' title="Accepted">AC</span></td><td class='text-right'>6 ms</td><td class='text-right'>3584 KB</td>
+						<td class="text-center">
+							<a href="/contests/abc001/submissions/15903787">Detail</a>
+						</td>
+					</tr>
+				
+					<tr>
+						
+						<td class="no-break"><time class='fixtime fixtime-second'>2020-08-15 18:28:45+0900</time></td>
+						<td><a href="/contests/abc001/tasks/abc001_1">A - 積雪深差</a></td>
+						<td><a href="/users/eru1a">eru1a</a> <a href='/contests/abc001/submissions?f.User=eru1a'><span class='glyphicon glyphicon-search black' aria-hidden='true' data-toggle='tooltip' title='view eru1a's submissions'></span></a></td>
+						<td>C&#43;&#43; (GCC 9.2.1)</td>
+						<td class="text-right submission-score" data-id="15903782">0</td>
+						<td class="text-right">97 Byte</td>
+						<td colspan='3' class='text-center'><span class='label label-warning' aria-hidden='true' data-toggle='tooltip' data-placement='top' title="Compilation Error">CE</span></td>
+						<td class="text-center">
+							<a href="/contests/abc001/submissions/15903782">Detail</a>
+						</td>
+					</tr>
+				
+					<tr>
+						
+						<td class="no-break"><time class='fixtime fixtime-second'>2020-05-30 08:33:40+0900</time></td>
+						<td><a href="/contests/abc001/tasks/abc001_2">B - 視程の通報</a></td>
+						<td><a href="/users/eru1a">eru1a</a> <a href='/contests/abc001/submissions?f.User=eru1a'><span class='glyphicon glyphicon-search black' aria-hidden='true' data-toggle='tooltip' title='view eru1a's submissions'></span></a></td>
+						<td>Rust (1.15.1)</td>
+						<td class="text-right submission-score" data-id="13696846">100</td>
+						<td class="text-right">1511 Byte</td>
+						<td class='text-center'><span class='label label-success' aria-hidden='true' data-toggle='tooltip' data-placement='top' title="Accepted">AC</span></td><td class='text-right'>2 ms</td><td class='text-right'>4352 KB</td>
+						<td class="text-center">
+							<a href="/contests/abc001/submissions/13696846">Detail</a>
+						</td>
+					</tr>
+				
+					<tr>
+						
+						<td class="no-break"><time class='fixtime fixtime-second'>2020-05-30 08:33:30+0900</time></td>
+						<td><a href="/contests/abc001/tasks/abc001_1">A - 積雪深差</a></td>
+						<td><a href="/users/eru1a">eru1a</a> <a href='/contests/abc001/submissions?f.User=eru1a'><span class='glyphicon glyphicon-search black' aria-hidden='true' data-toggle='tooltip' title='view eru1a's submissions'></span></a></td>
+						<td>Rust (1.15.1)</td>
+						<td class="text-right submission-score" data-id="13696841">100</td>
+						<td class="text-right">1197 Byte</td>
+						<td class='text-center'><span class='label label-success' aria-hidden='true' data-toggle='tooltip' data-placement='top' title="Accepted">AC</span></td><td class='text-right'>2 ms</td><td class='text-right'>4352 KB</td>
+						<td class="text-center">
+							<a href="/contests/abc001/submissions/13696841">Detail</a>
+						</td>
+					</tr>
+				
+				</tbody>
+			</table>
+		</div>
+	
+</div>
+<script>var reloadInterval =  5000 ;</script>
+
+<div class="text-center">
+	<ul class="pagination pagination-sm mt-0 mb-1">
+		
+			<li class="active"><a href='/contests/abc001/submissions?f.User=eru1a&amp;page=1'>1</a></li>
+		
+	</ul>
+</div>
+	</div>
+</div>
+
+
+
+
+		
+			<hr>
+			
+			
+			
+<div class="a2a_kit a2a_kit_size_20 a2a_default_style pull-right" data-a2a-url="https://atcoder.jp/contests/abc001/submissions?f.User=eru1a&amp;lang=en" data-a2a-title="All Submissions - AtCoder Beginner Contest 001">
+	<a class="a2a_button_facebook"></a>
+	<a class="a2a_button_twitter"></a>
+	
+		<a class="a2a_button_telegram"></a>
+	
+	<a class="a2a_dd" href="https://www.addtoany.com/share"></a>
+</div>
+
+		
+		<script async src="//static.addtoany.com/menu/page.js"></script>
+		
+	</div> 
+	<hr>
+</div> 
+
+	<div class="container" style="margin-bottom: 80px;">
+			<footer class="footer">
+			
+				<ul>
+					<li><a href="/contests/abc001/rules">Rule</a></li>
+					<li><a href="/contests/abc001/glossary">Glossary</a></li>
+					
+				</ul>
+			
+			<ul>
+				<li><a href="/tos">Terms of service</a></li>
+				<li><a href="/privacy">Privacy Policy</a></li>
+				<li><a href="/personal">Information Protection Policy</a></li>
+				<li><a href="/company">Company</a></li>
+				<li><a href="/faq">FAQ</a></li>
+				<li><a href="/contact">Contact</a></li>
+				
+			</ul>
+			<div class="text-center">
+					<small id="copyright">Copyright Since 2012 &copy;<a href="http://atcoder.co.jp">AtCoder Inc.</a> All rights reserved.</small>
+			</div>
+			</footer>
+	</div>
+	<p id="fixed-server-timer" class="contest-timer"></p>
+	<div id="scroll-page-top" style="display:none;"><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span> Page Top</div>
+
+</body>
+</html>
+
