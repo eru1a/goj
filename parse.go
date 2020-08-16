@@ -163,6 +163,7 @@ func ParseSubmissionsStatus(r io.Reader) ([]*SubmissionStatus, error) {
 
 	doc.Find("table > tbody > tr").Each(func(_ int, s *goquery.Selection) {
 		submissions = append(submissions, &SubmissionStatus{
+			ID:         s.Find("td:nth-child(5)").AttrOr("data-id", ""),
 			Date:       s.Find("td:nth-child(1)").Text(),
 			Problem:    s.Find("td:nth-child(2)").Text(),
 			User:       s.Find("td:nth-child(3)").Text(),

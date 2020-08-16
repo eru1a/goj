@@ -9,6 +9,7 @@ import (
 )
 
 type SubmissionStatus struct {
+	ID         string
 	Date       string
 	Problem    string
 	User       string

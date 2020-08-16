@@ -8,8 +8,10 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/gookit/color"
 	cookiejar "github.com/juju/persistent-cookiejar"
 )
 
@@ -226,4 +228,49 @@ func (a *AtCoder) SubmissionsStatus(contest string) ([]*SubmissionStatus, error)
 		return nil, err
 	}
 	return status, nil
+}
+
+func (a *AtCoder) WatchSubmissionStatus(contest string) error {
+	isFinish := func(result string) bool {
+		for _, s := range []string{"AC", "WA", "TLE", "MLE", "RE", "CE", "QLE", "IE"} {
+			if result == s {
+				return true
+			}
+		}
+		return false
+	}
+
+	isWA := func(result string) bool {
+		for _, s := range []string{"WA", "TLE", "MLE", "RE", "CE", "QLE", "IE"} {
+			if strings.Contains(result, s) {
+				return true
+			}
+		}
+		return false
+	}
+
+	for {
+		status, err := a.SubmissionsStatus(contest)
+		if err != nil {
+			return err
+		}
+
+		result := status[0].Result
+		if result == "AC" {
+			result = color.Green.Sprint(result)
+		}
+		if isWA(status[0].Result) {
+			result = color.Yellow.Sprint(result)
+		}
+		if isFinish(status[0].Result) {
+			fmt.Printf("\r\033[KResult: %s\n", result)
+			break
+		}
+		fmt.Printf("\r\033[KJudging... %s", result)
+
+		// time.Tickerのほうがいいのかな
+		time.Sleep(time.Second * 2)
+	}
+
+	return nil
 }

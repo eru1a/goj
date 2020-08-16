@@ -67,6 +67,9 @@ func NewSubmitCmd(atcoder *AtCoder, config *Config) cli.Command {
 			if err := atcoder.Submit(contest, problem, src, lang.Name); err != nil {
 				return fmt.Errorf("%v: submit failed (%s, %s, %s, %s)", err, contest, problem, src, lang.Name)
 			}
+			if err := atcoder.WatchSubmissionStatus(contest); err != nil {
+				return err
+			}
 			return nil
 		},
 	}

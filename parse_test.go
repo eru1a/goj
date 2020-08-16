@@ -180,6 +180,7 @@ func TestParseSubmissionsStatus(t *testing.T) {
 			file: "testdata/submissions",
 			status: []*SubmissionStatus{
 				{
+					ID:         "15903812",
 					Date:       "2020-08-15 18:30:10+0900",
 					Problem:    "A - 積雪深差",
 					User:       "eru1a ",
@@ -191,6 +192,7 @@ func TestParseSubmissionsStatus(t *testing.T) {
 					Memory:     "3292 KB",
 				},
 				{
+					ID:         "15903794",
 					Date:       "2020-08-15 18:29:23+0900",
 					Problem:    "A - 積雪深差",
 					User:       "eru1a ",
@@ -202,6 +204,7 @@ func TestParseSubmissionsStatus(t *testing.T) {
 					Memory:     "3632 KB",
 				},
 				{
+					ID:         "15903787",
 					Date:       "2020-08-15 18:29:10+0900",
 					Problem:    "A - 積雪深差",
 					User:       "eru1a ",
@@ -213,6 +216,7 @@ func TestParseSubmissionsStatus(t *testing.T) {
 					Memory:     "3584 KB",
 				},
 				{
+					ID:         "15903782",
 					Date:       "2020-08-15 18:28:45+0900",
 					Problem:    "A - 積雪深差",
 					User:       "eru1a ",
@@ -224,6 +228,7 @@ func TestParseSubmissionsStatus(t *testing.T) {
 					Memory:     "",
 				},
 				{
+					ID:         "13696846",
 					Date:       "2020-05-30 08:33:40+0900",
 					Problem:    "B - 視程の通報",
 					User:       "eru1a ",
@@ -235,6 +240,7 @@ func TestParseSubmissionsStatus(t *testing.T) {
 					Memory:     "4352 KB",
 				},
 				{
+					ID:         "13696841",
 					Date:       "2020-05-30 08:33:30+0900",
 					Problem:    "A - 積雪深差",
 					User:       "eru1a ",
