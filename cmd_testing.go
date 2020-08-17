@@ -3,27 +3,8 @@ package main
 import (
 	"errors"
 
-	"github.com/gookit/color"
 	"github.com/urfave/cli"
 )
-
-func judge(problem string, cmd string) bool {
-	ac, wa, re, err := Judge(problem, cmd)
-	if err != nil {
-		panic(err)
-	}
-	result := color.Green.Sprint("AC")
-	if re > 0 {
-		result = color.Red.Sprint("RE")
-	} else if wa > 0 {
-		result = color.Red.Sprint("WA")
-	}
-	LogEmit("%s (AC:%d WA:%d RE:%d)", result, ac, wa, re)
-	if re == 0 && wa == 0 {
-		return true
-	}
-	return false
-}
 
 func ParseTestCmdArgs(c *cli.Context, config *Config) (lang *Language, problem string, cmd string, err error) {
 	if len(c.Args()) > 1 {
@@ -80,7 +61,9 @@ func NewTestCmd(config *Config) cli.Command {
 				}
 			}
 
-			judge(problem, cmd)
+			if _, err := Judge(problem, cmd); err != nil {
+				return err
+			}
 			return nil
 		},
 	}

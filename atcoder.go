@@ -230,7 +230,9 @@ func (a *AtCoder) SubmissionsStatus(contest string) ([]*SubmissionStatus, error)
 	return status, nil
 }
 
-func (a *AtCoder) WatchSubmissionStatus(contest string) error {
+// 自分の最も最近の提出をジャッジが終わるまで観測する
+// 提出IDから辿れる専用のページを見たほうがいいだろうか？
+func (a *AtCoder) WatchLastSubmissionStatus(contest string) error {
 	isFinish := func(result string) bool {
 		for _, s := range []string{"AC", "WA", "TLE", "MLE", "RE", "CE", "QLE", "IE"} {
 			if result == s {

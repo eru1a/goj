@@ -35,9 +35,8 @@ func ParseSubmitCmdArgs(c *cli.Context, config *Config) (lang *Language, contest
 
 func NewSubmitCmd(atcoder *AtCoder, config *Config) cli.Command {
 	return cli.Command{
-		Name:    "submit",
-		Aliases: []string{"s"},
-		Usage:   "goj submit <problem>",
+		Name:  "submit",
+		Usage: "goj submit <problem>",
 		Flags: []cli.Flag{
 			cli.StringFlag{
 				Name: "language, l",
@@ -57,7 +56,11 @@ func NewSubmitCmd(atcoder *AtCoder, config *Config) cli.Command {
 				if err := lang.Build(problem); err != nil {
 					return err
 				}
-				if ac := judge(problem, lang.GetRunCmd(problem)); !ac {
+				result, err := Judge(problem, lang.GetRunCmd(problem))
+				if err != nil {
+					return err
+				}
+				if !result.IsAC {
 					LogFailure("interrupted the submission because test failed")
 					return nil
 				}
@@ -67,7 +70,7 @@ func NewSubmitCmd(atcoder *AtCoder, config *Config) cli.Command {
 			if err := atcoder.Submit(contest, problem, src, lang.Name); err != nil {
 				return fmt.Errorf("%v: submit failed (%s, %s, %s, %s)", err, contest, problem, src, lang.Name)
 			}
-			if err := atcoder.WatchSubmissionStatus(contest); err != nil {
+			if err := atcoder.WatchLastSubmissionStatus(contest); err != nil {
 				return err
 			}
 			return nil
