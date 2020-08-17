@@ -10,6 +10,60 @@ import (
 	"github.com/kylelemons/godebug/pretty"
 )
 
+func TestCmpOutput(t *testing.T) {
+	tests := []struct {
+		actual         string
+		expected       string
+		floatTolerance float64
+		result         bool
+	}{
+		{
+			actual:         "6.283185307179586\n",
+			expected:       "6.28318530717958623200\n",
+			floatTolerance: 0.01,
+			result:         true,
+		},
+		{
+			actual:         "6.28\n",
+			expected:       "6.28318530717958623200\n",
+			floatTolerance: 0.01,
+			result:         true,
+		},
+		{
+			actual:         "6\n",
+			expected:       "6.28318530717958623200\n",
+			floatTolerance: 0.01,
+			result:         false,
+		},
+		{
+			actual:         "a b c\n1 2 3\n",
+			expected:       "a b c\n1 2 3\n",
+			floatTolerance: 0,
+			result:         true,
+		},
+		{
+			actual:         "a b c\n1 2 3\n",
+			expected:       "a b c\n1 3\n",
+			floatTolerance: 0,
+			result:         false,
+		},
+		{
+			actual:         "a b c\n1 2 3 4\n",
+			expected:       "a b c\n1 2 3\n",
+			floatTolerance: 0,
+			result:         false,
+		},
+	}
+
+	for _, test := range tests {
+		result := CmpOutput(test.actual, test.expected, test.floatTolerance)
+		if result != test.result {
+			t.Errorf("CmpOutput(%s, %s, %f): want %v, got %v",
+				test.actual, test.expected, test.floatTolerance, test.result, result)
+		}
+	}
+}
+
 func TestJudge(t *testing.T) {
 	os.Stderr = nil
 	log.SetOutput(ioutil.Discard)
@@ -67,7 +121,7 @@ func TestJudge(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		result, err := Judge(test.problem, test.cmd)
+		result, err := Judge(test.problem, test.cmd, 0)
 		if err != nil {
 			t.Fatal(err)
 		}

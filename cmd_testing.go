@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"math"
 
 	"github.com/urfave/cli"
 )
@@ -48,6 +49,10 @@ func NewTestCmd(config *Config) cli.Command {
 			cli.StringFlag{
 				Name: "language, l",
 			},
+			cli.IntFlag{
+				Name:  "f",
+				Usage: "float tolerance",
+			},
 		},
 		Action: func(c *cli.Context) error {
 			lang, problem, cmd, err := ParseTestCmdArgs(c, config)
@@ -61,7 +66,11 @@ func NewTestCmd(config *Config) cli.Command {
 				}
 			}
 
-			if _, err := Judge(problem, cmd); err != nil {
+			floatTolerance := 0.0
+			if c.Int("f") != 0 {
+				floatTolerance = math.Pow10(-c.Int("f"))
+			}
+			if _, err := Judge(problem, cmd, floatTolerance); err != nil {
 				return err
 			}
 			return nil

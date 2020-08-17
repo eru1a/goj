@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"math"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/gookit/color"
@@ -38,7 +40,7 @@ func NewJudgeResult(ac, wa, re int) *JudgeResult {
 	}
 }
 
-func CmpOutput(actual, expected string) bool {
+func CmpOutput(actual, expected string, floatTolerance float64) bool {
 	a := strings.Split(actual, "\n")
 	e := strings.Split(expected, "\n")
 
@@ -47,16 +49,38 @@ func CmpOutput(actual, expected string) bool {
 	}
 
 	for i := range a {
-		if strings.TrimSuffix(a[i], " ") != e[i] {
+		aa := strings.Split(a[i], " ")
+		ee := strings.Split(e[i], " ")
+		if len(aa) != len(ee) {
 			return false
+		}
+		for j := range aa {
+			af, err1 := strconv.ParseFloat(aa[j], 64)
+			ef, err2 := strconv.ParseFloat(ee[j], 64)
+			switch {
+			case err1 == nil && err2 == nil:
+				// float同士の比較なので許容誤差を考慮する
+				if math.Abs(af-ef) > floatTolerance {
+					return false
+				}
+			case err1 != nil && err2 == nil, err1 == nil && err1 != nil:
+				// 片方しかfloatに変換出来てないのでおかしい
+				return false
+			default:
+				// どっちもfloatに変換出来ない
+				if aa[j] != ee[j] {
+					return false
+				}
+			}
 		}
 	}
 
 	return true
 }
 
-func Judge(problem string, command string) (*JudgeResult, error) {
+func Judge(problem string, command string, floatTolerance float64) (*JudgeResult, error) {
 	LogInfo("test %s (%s)", problem, command)
+	LogInfo("Float Tolerance: %f", floatTolerance)
 	dir := fmt.Sprintf("test_%s", problem)
 	files, err := ioutil.ReadDir(dir)
 	if err != nil {
@@ -108,7 +132,7 @@ func Judge(problem string, command string) (*JudgeResult, error) {
 			continue
 		}
 
-		if CmpOutput(string(stdout), string(out)) {
+		if CmpOutput(string(stdout), string(out), floatTolerance) {
 			ac++
 			LogSuccess(color.Green.Sprint("AC"))
 		} else {

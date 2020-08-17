@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 
 	"github.com/urfave/cli"
 )
@@ -42,8 +43,12 @@ func NewSubmitCmd(atcoder *AtCoder, config *Config) cli.Command {
 				Name: "language, l",
 			},
 			cli.BoolFlag{
-				Name:  "force, f",
+				Name:  "skip",
 				Usage: "skip tests",
+			},
+			cli.UintFlag{
+				Name:  "f",
+				Usage: "float tolerance (10^(-f))",
 			},
 		},
 		Action: func(c *cli.Context) error {
@@ -56,7 +61,11 @@ func NewSubmitCmd(atcoder *AtCoder, config *Config) cli.Command {
 				if err := lang.Build(problem); err != nil {
 					return err
 				}
-				result, err := Judge(problem, lang.GetRunCmd(problem))
+				floatTolerance := 0.0
+				if c.Uint("f") != 0 {
+					floatTolerance = math.Pow10(-int(c.Uint("f")))
+				}
+				result, err := Judge(problem, lang.GetRunCmd(problem), floatTolerance)
 				if err != nil {
 					return err
 				}
