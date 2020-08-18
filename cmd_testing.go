@@ -49,7 +49,7 @@ func NewTestCmd(config *Config) cli.Command {
 			cli.StringFlag{
 				Name: "language, l",
 			},
-			cli.IntFlag{
+			cli.UintFlag{
 				Name:  "f",
 				Usage: "float tolerance",
 			},
@@ -68,7 +68,7 @@ func NewTestCmd(config *Config) cli.Command {
 
 			floatTolerance := 0.0
 			if c.Int("f") != 0 {
-				floatTolerance = math.Pow10(-c.Int("f"))
+				floatTolerance = math.Pow10(-int(c.Uint("f")))
 			}
 			if _, err := Judge(problem, cmd, floatTolerance); err != nil {
 				return err

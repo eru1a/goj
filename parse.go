@@ -4,6 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"math"
+	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
@@ -26,21 +29,15 @@ func ParseContest(r io.Reader) ([]string, error) {
 	return urls, nil
 }
 
-// IDとテストケースを返す
-func ParseProblem(r io.Reader) (string, []*TestCase, error) {
-	doc, err := goquery.NewDocumentFromReader(r)
-	if err != nil {
-		return "", nil, err
-	}
-
-	var id string
-
+func parseProblemID(doc *goquery.Document) (string, error) {
 	title := doc.Find("title").Text()
 	if !strings.Contains(title, "-") {
-		return "", nil, errors.New("cannot parse problem's title")
+		return "", errors.New("cannot parse problem's title")
 	}
-	id = strings.TrimSpace(strings.Split(title, "-")[0])
+	return strings.TrimSpace(strings.Split(title, "-")[0]), nil
+}
 
+func parseProblemTestCases(doc *goquery.Document) ([]*TestCase, error) {
 	newTestCases := func(input, output []string) ([]*TestCase, error) {
 		if len(input) != len(output) {
 			return nil, errors.New("The lengths of input and output are different.")
@@ -51,8 +48,6 @@ func ParseProblem(r io.Reader) (string, []*TestCase, error) {
 		}
 		return testcases, nil
 	}
-
-	var input, output []string
 
 	// 最近のパターン
 	// sectionの中のh3の中のpre
@@ -66,6 +61,8 @@ func ParseProblem(r io.Reader) (string, []*TestCase, error) {
 	// </section>
 	// </div>
 	{
+		var input, output []string
+
 		h3sel := doc.Find(".part > section > h3")
 		h3sel.Each(func(_ int, s *goquery.Selection) {
 			switch {
@@ -78,9 +75,9 @@ func ParseProblem(r io.Reader) (string, []*TestCase, error) {
 		if len(input) != 0 {
 			testcases, err := newTestCases(input, output)
 			if err != nil {
-				return "", nil, err
+				return nil, err
 			}
-			return id, testcases, nil
+			return testcases, nil
 		}
 	}
 
@@ -95,6 +92,8 @@ func ParseProblem(r io.Reader) (string, []*TestCase, error) {
 	// </pre>
 	// </section>
 	{
+		var input, output []string
+
 		h3sel := doc.Find("h3")
 		h3sel.Each(func(_ int, s *goquery.Selection) {
 			switch {
@@ -107,15 +106,100 @@ func ParseProblem(r io.Reader) (string, []*TestCase, error) {
 		if len(input) != 0 {
 			testcases, err := newTestCases(input, output)
 			if err != nil {
-				return "", nil, err
+				return nil, err
 			}
-			return id, testcases, nil
+			return testcases, nil
 		}
 	}
 
 	// もっと別のパターンもある？
+	return nil, errors.New("cannot find sample testcase")
+}
 
-	return "", nil, errors.New("cannot find sample testcase")
+// 実行時間制限とメモリ制限を取得する
+// 見つからなかった場合ログにエラーを出力しデフォルト値として(2, 1024)を返す
+// 実用上はデフォルトの値で困らないのでエラーを返したりはしない
+func parseProblemTimeLimitAndMemoryLimit(doc *goquery.Document) (int, int) {
+	// Time Limit: 2 sec / Memory Limit: 1024 MB
+	re := regexp.MustCompile("Time Limit: ([0-9]+) sec / Memory Limit: ([0-9]+) MB")
+	text := strings.TrimSpace(doc.Find("#task-statement").Prev().Text())
+	match := re.FindSubmatch([]byte(text))
+	if len(match) != 3 {
+		LogFailure("cannot find time limit and memory limit")
+		return 2, 1024
+	}
+	timeLimit, err := strconv.Atoi(string(match[1]))
+	if err != nil {
+		LogFailure("%cannot find time limit: v", err)
+		return 2, 1024
+	}
+	memoryLimit, err := strconv.Atoi(string(match[2]))
+	if err != nil {
+		LogFailure("cannot find memory limit: %v", err)
+		return 2, 1024
+	}
+	return timeLimit, memoryLimit
+}
+
+// 小数の許容誤差を返す。見つからなければ0.0。
+func parseProblemFloatTolerance(doc *goquery.Document) float64 {
+	// 10^{−2}とか10^{-5}とか
+	// 何で負の符号が2種類あるの...
+	re := regexp.MustCompile(`10\^\{[−|-]([0-9]+)\}`)
+
+	floatTolerance := 0.0
+	doc.Find("section > h3").Each(func(_ int, s *goquery.Selection) {
+		if s.Text() != "出力" {
+			return
+		}
+		s.NextAll().Each(func(_ int, s *goquery.Selection) {
+			match := re.FindSubmatch([]byte(s.Text()))
+			if len(match) == 2 {
+				i, err := strconv.Atoi(string(match[1]))
+				// 一応エラーチェックしとく
+				if err != nil {
+					LogFailure("%v", err)
+					return
+				}
+				floatTolerance = math.Pow10(-i)
+			}
+		})
+	})
+	return floatTolerance
+}
+
+// IDとテストケースを返す
+func ParseProblem(r io.Reader, contest, problem, url string) (*Problem, error) {
+	doc, err := goquery.NewDocumentFromReader(r)
+	if err != nil {
+		return nil, err
+	}
+
+	id, err := parseProblemID(doc)
+	if err != nil {
+		return nil, err
+	}
+
+	testcases, err := parseProblemTestCases(doc)
+	if err != nil {
+		return nil, err
+	}
+
+	timeLimit, memoryLimit := parseProblemTimeLimitAndMemoryLimit(doc)
+	floatTolerance := parseProblemFloatTolerance(doc)
+
+	return &Problem{
+		ProblemInfo: &ProblemInfo{
+			Contest:        contest,
+			Name:           problem,
+			URL:            url,
+			ID:             id,
+			TimeLimitSec:   timeLimit,
+			MemoryLimitMB:  memoryLimit,
+			FloatTolerance: floatTolerance,
+		},
+		TestCases: testcases,
+	}, nil
 }
 
 func ParseCSRFToken(r io.Reader) (string, error) {

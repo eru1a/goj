@@ -54,39 +54,96 @@ func TestParseAtCoderContest(t *testing.T) {
 
 func TestParseAtCoderProblem(t *testing.T) {
 	tests := []struct {
-		file      string
-		id        string
-		testcases []*TestCase
+		file    string
+		problem *Problem
 	}{
 		{
 			file: "testdata/abc001_1",
-			id:   "A",
-			testcases: []*TestCase{
-				{
-					Input:  "15\n10\n",
-					Output: "5\n",
+			problem: &Problem{
+				ProblemInfo: &ProblemInfo{
+					ID:            "A",
+					TimeLimitSec:  2,
+					MemoryLimitMB: 64,
 				},
-				{
-					Input:  "0\n0\n",
-					Output: "0\n",
-				},
-				{
-					Input:  "5\n20\n",
-					Output: "-15\n",
+				TestCases: []*TestCase{
+					{
+						Input:  "15\n10\n",
+						Output: "5\n",
+					},
+					{
+						Input:  "0\n0\n",
+						Output: "0\n",
+					},
+					{
+						Input:  "5\n20\n",
+						Output: "-15\n",
+					},
 				},
 			},
 		},
 		{
 			file: "testdata/abc173_b",
-			id:   "B",
-			testcases: []*TestCase{
-				{
-					Input:  "6\nAC\nTLE\nAC\nAC\nWA\nTLE\n",
-					Output: "AC x 3\nWA x 1\nTLE x 2\nRE x 0\n",
+			problem: &Problem{
+				ProblemInfo: &ProblemInfo{
+					ID:            "B",
+					TimeLimitSec:  2,
+					MemoryLimitMB: 1024,
 				},
-				{
-					Input:  "10\nAC\nAC\nAC\nAC\nAC\nAC\nAC\nAC\nAC\nAC\n",
-					Output: "AC x 10\nWA x 0\nTLE x 0\nRE x 0\n",
+				TestCases: []*TestCase{
+					{
+						Input:  "6\nAC\nTLE\nAC\nAC\nWA\nTLE\n",
+						Output: "AC x 3\nWA x 1\nTLE x 2\nRE x 0\n",
+					},
+					{
+						Input:  "10\nAC\nAC\nAC\nAC\nAC\nAC\nAC\nAC\nAC\nAC\n",
+						Output: "AC x 10\nWA x 0\nTLE x 0\nRE x 0\n",
+					},
+				},
+			},
+		},
+		{
+			file: "testdata/abc163_a",
+			problem: &Problem{
+				ProblemInfo: &ProblemInfo{
+					ID:             "A",
+					TimeLimitSec:   2,
+					MemoryLimitMB:  1024,
+					FloatTolerance: 0.01,
+				},
+				TestCases: []*TestCase{
+					{
+						Input:  "1\n",
+						Output: "6.28318530717958623200\n",
+					},
+					{
+						Input:  "73\n",
+						Output: "458.67252742410977361942\n",
+					},
+				},
+			},
+		},
+		{
+			file: "testdata/abc138_b",
+			problem: &Problem{
+				ProblemInfo: &ProblemInfo{
+					ID:             "B",
+					TimeLimitSec:   2,
+					MemoryLimitMB:  1024,
+					FloatTolerance: 0.00001,
+				},
+				TestCases: []*TestCase{
+					{
+						Input:  "2\n10 30\n",
+						Output: "7.5\n",
+					},
+					{
+						Input:  "3\n200 200 200\n",
+						Output: "66.66666666666667\n",
+					},
+					{
+						Input:  "1\n1000\n",
+						Output: "1000\n",
+					},
 				},
 			},
 		},
@@ -98,15 +155,12 @@ func TestParseAtCoderProblem(t *testing.T) {
 			t.Fatal(err)
 		}
 		defer f.Close()
-		id, testcases, err := ParseProblem(f)
+		problem, err := ParseProblem(f, "", "", "")
 		if err != nil {
 			t.Error(err)
 		}
-		if id != test.id {
-			t.Errorf("[%s] want %v, got %v\n", test.file, test.id, id)
-		}
-		if !reflect.DeepEqual(testcases, test.testcases) {
-			t.Errorf("[%s] %s", test.file, pretty.Compare(test.testcases, testcases))
+		if !reflect.DeepEqual(problem, test.problem) {
+			t.Errorf("[%s] %s", test.file, pretty.Compare(test.problem, problem))
 		}
 	}
 }

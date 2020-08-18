@@ -80,7 +80,7 @@ func CmpOutput(actual, expected string, floatTolerance float64) bool {
 
 func Judge(problem string, command string, floatTolerance float64) (*JudgeResult, error) {
 	LogInfo("test %s (%s)", problem, command)
-	LogInfo("Float Tolerance: %f", floatTolerance)
+	LogInfo("Float Tolerance: %.9f", floatTolerance)
 	dir := fmt.Sprintf("test_%s", problem)
 	files, err := ioutil.ReadDir(dir)
 	if err != nil {

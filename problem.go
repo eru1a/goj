@@ -24,6 +24,12 @@ type ProblemInfo struct {
 	// e.g. "abc174"
 	Contest string `toml:"contest"`
 	URL     string `toml:"url"`
+	// 実行制限時間(sec)
+	TimeLimitSec int `toml:"time_limit"`
+	// メモリ制限(mb)
+	MemoryLimitMB int `toml:"memory_limit"`
+	// 小数の許容誤差
+	FloatTolerance float64 `toml:"float_tolerance"`
 }
 
 type Problem struct {

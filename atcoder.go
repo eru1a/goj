@@ -62,6 +62,9 @@ func (a *AtCoder) DownloadProblem(contest, problem string, lang *Language) error
 	if err != nil {
 		return err
 	}
+	if err := p.AddTOML(); err != nil {
+		return err
+	}
 	if err := p.Save(); err != nil {
 		return err
 	}
@@ -107,26 +110,12 @@ func (a *AtCoder) FetchProblem(contest, problem string) (*Problem, error) {
 	defer res.Body.Close()
 	LogSuccess("fetched %s", url)
 
-	id, testcases, err := ParseProblem(res.Body)
+	p, err := ParseProblem(res.Body, contest, problem, url)
 	if err != nil {
 		LogFailure("failed to parse problem's testcase: url %s", url)
 		return nil, err
 	}
-
-	problemInfo := &ProblemInfo{
-		ID:      id,
-		Name:    problem,
-		Contest: contest,
-		URL:     url,
-	}
-	if err := problemInfo.AddTOML(); err != nil {
-		return nil, err
-	}
-
-	return &Problem{
-		ProblemInfo: problemInfo,
-		TestCases:   testcases,
-	}, nil
+	return p, nil
 }
 
 func (a *AtCoder) Login(username, password string) error {
