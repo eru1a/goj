@@ -16,11 +16,11 @@ func TestParseDownloadCmdArgs(t *testing.T) {
 	os.Stderr = nil
 	log.SetOutput(ioutil.Discard)
 
-	if err := os.Chdir("testdata/abc002"); err != nil {
+	if err := os.Chdir("testdata/parse_args/download/abc002"); err != nil {
 		panic(err)
 	}
 	defer func() {
-		if err := os.Chdir("../.."); err != nil {
+		if err := os.Chdir("../../../.."); err != nil {
 			panic(err)
 		}
 	}()

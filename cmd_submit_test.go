@@ -13,15 +13,15 @@ import (
 	"github.com/urfave/cli"
 )
 
-func TestParseSubmitmCmdArgs(t *testing.T) {
+func TestParseSubmitCmdArgs(t *testing.T) {
 	os.Stderr = nil
 	log.SetOutput(ioutil.Discard)
 
-	if err := os.Chdir("testdata/abc003"); err != nil {
+	if err := os.Chdir("testdata/parse_args/submit/abc003"); err != nil {
 		panic(err)
 	}
 	defer func() {
-		if err := os.Chdir("../.."); err != nil {
+		if err := os.Chdir("../../../.."); err != nil {
 			panic(err)
 		}
 	}()

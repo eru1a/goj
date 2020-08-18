@@ -14,7 +14,7 @@ func TestParseAtCoderContest(t *testing.T) {
 		urls []string
 	}{
 		{
-			file: "testdata/abc001_tasks",
+			file: "testdata/parse/abc001_tasks",
 			urls: []string{
 				"https://atcoder.jp/contests/abc001/tasks/abc001_1",
 				"https://atcoder.jp/contests/abc001/tasks/abc001_2",
@@ -23,7 +23,7 @@ func TestParseAtCoderContest(t *testing.T) {
 			},
 		},
 		{
-			file: "testdata/abc173_tasks",
+			file: "testdata/parse/abc173_tasks",
 			urls: []string{
 				"https://atcoder.jp/contests/abc173/tasks/abc173_a",
 				"https://atcoder.jp/contests/abc173/tasks/abc173_b",
@@ -58,7 +58,7 @@ func TestParseAtCoderProblem(t *testing.T) {
 		problem *Problem
 	}{
 		{
-			file: "testdata/abc001_1",
+			file: "testdata/parse/abc001_1",
 			problem: &Problem{
 				ProblemInfo: &ProblemInfo{
 					ID:            "A",
@@ -82,7 +82,7 @@ func TestParseAtCoderProblem(t *testing.T) {
 			},
 		},
 		{
-			file: "testdata/abc173_b",
+			file: "testdata/parse/abc173_b",
 			problem: &Problem{
 				ProblemInfo: &ProblemInfo{
 					ID:            "B",
@@ -102,7 +102,7 @@ func TestParseAtCoderProblem(t *testing.T) {
 			},
 		},
 		{
-			file: "testdata/abc163_a",
+			file: "testdata/parse/abc163_a",
 			problem: &Problem{
 				ProblemInfo: &ProblemInfo{
 					ID:             "A",
@@ -123,7 +123,7 @@ func TestParseAtCoderProblem(t *testing.T) {
 			},
 		},
 		{
-			file: "testdata/abc138_b",
+			file: "testdata/parse/abc138_b",
 			problem: &Problem{
 				ProblemInfo: &ProblemInfo{
 					ID:             "B",
@@ -171,7 +171,7 @@ func TestParseCSRFToken(t *testing.T) {
 		csrf string
 	}{
 		{
-			file: "testdata/login",
+			file: "testdata/parse/login",
 			csrf: "JmExC2cpP04lxScfq2TNW/1o0XDVKQfkJjYW3PEtnHM=",
 		},
 	}
@@ -211,7 +211,7 @@ func TestParseLanguageID(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		f, err := os.Open("testdata/submit")
+		f, err := os.Open("testdata/parse/submit")
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -231,7 +231,7 @@ func TestParseSubmissionsStatus(t *testing.T) {
 		status []*SubmissionStatus
 	}{
 		{
-			file: "testdata/submissions",
+			file: "testdata/parse/submissions",
 			status: []*SubmissionStatus{
 				{
 					ID:         "15903812",

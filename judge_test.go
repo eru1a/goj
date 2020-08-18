@@ -68,11 +68,11 @@ func TestJudge(t *testing.T) {
 	os.Stderr = nil
 	log.SetOutput(ioutil.Discard)
 
-	if err := os.Chdir("testdata"); err != nil {
+	if err := os.Chdir("testdata/judge"); err != nil {
 		panic(err)
 	}
 	defer func() {
-		if err := os.Chdir(".."); err != nil {
+		if err := os.Chdir("../.."); err != nil {
 			panic(err)
 		}
 	}()
