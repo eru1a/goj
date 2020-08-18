@@ -65,7 +65,7 @@ func NewSubmitCmd(atcoder *AtCoder, config *Config) cli.Command {
 				if c.Uint("f") != 0 {
 					floatTolerance = math.Pow10(-int(c.Uint("f")))
 				}
-				result, err := Judge(problem, lang.GetRunCmd(problem), floatTolerance)
+				result, err := Judge(problem, lang.GetRunCmd(problem), 2*1000, 1024, floatTolerance)
 				if err != nil {
 					return err
 				}

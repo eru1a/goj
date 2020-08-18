@@ -70,7 +70,7 @@ func NewTestCmd(config *Config) cli.Command {
 			if c.Int("f") != 0 {
 				floatTolerance = math.Pow10(-int(c.Uint("f")))
 			}
-			if _, err := Judge(problem, cmd, floatTolerance); err != nil {
+			if _, err := Judge(problem, cmd, 2*1000, 1024, floatTolerance); err != nil {
 				return err
 			}
 			return nil

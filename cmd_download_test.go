@@ -13,7 +13,6 @@ import (
 )
 
 func TestParseDownloadCmdArgs(t *testing.T) {
-	os.Stderr = nil
 	log.SetOutput(ioutil.Discard)
 
 	if err := os.Chdir("testdata/parse_args/download/abc002"); err != nil {

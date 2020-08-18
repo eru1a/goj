@@ -14,7 +14,6 @@ import (
 )
 
 func TestParseSubmitCmdArgs(t *testing.T) {
-	os.Stderr = nil
 	log.SetOutput(ioutil.Discard)
 
 	if err := os.Chdir("testdata/parse_args/submit/abc003"); err != nil {
