@@ -6,6 +6,8 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"sort"
+	"strings"
 
 	"github.com/BurntSushi/toml"
 )
@@ -106,4 +108,41 @@ func (p *Problem) Save() error {
 	}
 	LogSuccess("saved %s's testcases", p.Name)
 	return nil
+}
+
+// 拡張子がextでファイル名がfileNameで終わる最も最近編集されたファイルの名前を返す。
+func FindProblemName(fileName string, ext string) (string, error) {
+	files, err := ioutil.ReadDir(".")
+	if err != nil {
+		return "", err
+	}
+	sort.SliceStable(files, func(i, j int) bool {
+		return files[i].ModTime().Unix() > files[j].ModTime().Unix()
+	})
+	for _, file := range files {
+		if file.IsDir() {
+			continue
+		}
+		if filepath.Ext(file.Name()) != ext {
+			continue
+		}
+		name := strings.TrimSuffix(file.Name(), filepath.Ext(file.Name()))
+		if strings.HasSuffix(name, fileName) {
+			return name, nil
+		}
+	}
+	return "", fmt.Errorf("cannot find a problem name. suffix: %s, ext: %s", fileName, ext)
+}
+
+func FindProblem(problemName string) (*ProblemInfo, error) {
+	problems, err := LoadProblems()
+	if err != nil {
+		return nil, err
+	}
+	for _, p := range problems.Problems {
+		if p.Name == problemName {
+			return p, nil
+		}
+	}
+	return nil, fmt.Errorf("cannot find a problem: name: %s", problemName)
 }

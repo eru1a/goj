@@ -23,7 +23,7 @@ func ParseTestCmdArgs(c *cli.Context, config *Config) (lang *Language, problem s
 			return nil, "", "", errors.New("couldn't find lang, and command was not given")
 		}
 
-		problem, err = getProblem(c.Args().First(), lang.Ext)
+		problem, err = FindProblemName(c.Args().First(), lang.Ext)
 		if err != nil {
 			return nil, "", "", err
 		}

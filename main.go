@@ -2,12 +2,9 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
-	"sort"
-	"strings"
 
 	cookiejar "github.com/juju/persistent-cookiejar"
 	"github.com/urfave/cli"
@@ -24,39 +21,6 @@ func findLang(languages []*Language, defaultLang, argLang string) (*Language, er
 		}
 	}
 	return nil, fmt.Errorf("cannot find %s in languages", defaultLang)
-}
-
-// 拡張子がextでファイルの名前がsuffixで終わる最も最近編集されたファイルを返す。
-func getProblem(suffix string, ext string) (string, error) {
-	files, err := ioutil.ReadDir(".")
-	if err != nil {
-		return "", err
-	}
-	var files2 []os.FileInfo
-	for _, file := range files {
-		if file.IsDir() {
-			continue
-		}
-		if !strings.HasSuffix(file.Name(), ext) {
-			continue
-		}
-		fileNameWithoutExt := strings.TrimSuffix(file.Name(), ext)
-		switch {
-		case suffix == "":
-			files2 = append(files2, file)
-		case fileNameWithoutExt == suffix:
-			files2 = append(files2, file)
-		case strings.HasSuffix(fileNameWithoutExt, suffix):
-			files2 = append(files2, file)
-		}
-	}
-	if len(files2) == 0 {
-		return "", fmt.Errorf("cannot find a file. suffix: %s, ext: %s", suffix, ext)
-	}
-	sort.SliceStable(files2, func(i, j int) bool {
-		return files2[i].ModTime().Unix() > files2[j].ModTime().Unix()
-	})
-	return strings.TrimSuffix(files2[0].Name(), ext), nil
 }
 
 func main() {

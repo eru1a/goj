@@ -17,7 +17,7 @@ func ParseSubmitCmdArgs(c *cli.Context, config *Config) (lang *Language, contest
 		return nil, "", "", err
 	}
 	// 最後に編集されたファイルから提出する問題を決める
-	problem, err = getProblem(c.Args().First(), lang.Ext)
+	problem, err = FindProblemName(c.Args().First(), lang.Ext)
 	if err != nil {
 		return nil, "", "", err
 	}
