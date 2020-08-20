@@ -16,12 +16,11 @@ import (
 func TestParseSubmitCmdArgs(t *testing.T) {
 	log.SetOutput(ioutil.Discard)
 
-	// TODO: testdata/problemを使う
-	if err := os.Chdir("testdata/parse_args/submit/abc003"); err != nil {
+	if err := os.Chdir("testdata/problem"); err != nil {
 		panic(err)
 	}
 	defer func() {
-		if err := os.Chdir("../../../.."); err != nil {
+		if err := os.Chdir("../.."); err != nil {
 			panic(err)
 		}
 	}()
@@ -54,40 +53,48 @@ func TestParseSubmitCmdArgs(t *testing.T) {
 			args:   []string{"goj", "submit"},
 			config: &Config{DefaultLanguage: "c++", Languages: languages},
 			want: result{
-				contest: "abc003",
-				problem: "abc003_3",
+				contest: "abc173",
+				problem: "abc173_a",
 			},
 		},
 		{
 			args:   []string{"goj", "submit"},
 			config: &Config{DefaultLanguage: "python", Languages: languages},
 			want: result{
-				contest: "abc003",
-				problem: "abc003_2",
+				contest: "abc173",
+				problem: "abc173_a",
 			},
 		},
 		{
 			args:   []string{"goj", "submit", "-l", "python"},
 			config: &Config{DefaultLanguage: "c++", Languages: languages},
 			want: result{
-				contest: "abc003",
-				problem: "abc003_2",
+				contest: "abc173",
+				problem: "abc173_a",
 			},
 		},
 		{
-			args:   []string{"goj", "submit", "abc003_1"},
+			args:   []string{"goj", "submit", "abc163_a"},
 			config: &Config{DefaultLanguage: "c++", Languages: languages},
 			want: result{
-				contest: "abc003",
-				problem: "abc003_1",
+				contest: "abc163",
+				problem: "abc163_a",
+			},
+		},
+		{
+			args:   []string{"goj", "submit", "b"},
+			config: &Config{DefaultLanguage: "c++", Languages: languages},
+			want: result{
+				contest: "abc173",
+				problem: "abc173_b",
 			},
 		},
 		{
 			args:   []string{"goj", "submit", "1"},
 			config: &Config{DefaultLanguage: "c++", Languages: languages},
 			want: result{
-				contest: "abc003",
-				problem: "abc003_1",
+				contest: "abc001",
+				problem: "abc001_1",
 			},
 		},
 	}
@@ -129,7 +136,7 @@ func TestParseSubmitCmdArgs(t *testing.T) {
 		config *Config
 	}{
 		{
-			args:   []string{"goj", "submit", "abc003_5"},
+			args:   []string{"goj", "submit", "abc173_c"},
 			config: &Config{DefaultLanguage: "c++", Languages: languages},
 		},
 		{

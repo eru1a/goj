@@ -16,12 +16,11 @@ import (
 func TestParseTestCmdArgs(t *testing.T) {
 	log.SetOutput(ioutil.Discard)
 
-	// TODO: testdata/problemを使う
-	if err := os.Chdir("testdata/parse_args/submit/abc003"); err != nil {
+	if err := os.Chdir("testdata/problem/"); err != nil {
 		panic(err)
 	}
 	defer func() {
-		if err := os.Chdir("../../../.."); err != nil {
+		if err := os.Chdir("../.."); err != nil {
 			panic(err)
 		}
 	}()
@@ -54,39 +53,39 @@ func TestParseTestCmdArgs(t *testing.T) {
 			args:   []string{"goj", "test"},
 			config: &Config{DefaultLanguage: "c++", Languages: languages},
 			want: result{
-				problem: "abc003_3",
-				cmd:     "./abc003_3",
+				problem: "abc173_a",
+				cmd:     "./abc173_a",
 			},
 		},
 		{
 			args:   []string{"goj", "test"},
 			config: &Config{DefaultLanguage: "python", Languages: languages},
 			want: result{
-				problem: "abc003_2",
-				cmd:     "python abc003_2.py",
+				problem: "abc173_a",
+				cmd:     "python abc173_a.py",
 			},
 		},
 		{
 			args:   []string{"goj", "test", "-l", "python"},
 			config: &Config{DefaultLanguage: "c++", Languages: languages},
 			want: result{
-				problem: "abc003_2",
-				cmd:     "python abc003_2.py",
+				problem: "abc173_a",
+				cmd:     "python abc173_a.py",
 			},
 		},
 		{
 			args:   []string{"goj", "test", "1"},
 			config: &Config{DefaultLanguage: "c++", Languages: languages},
 			want: result{
-				problem: "abc003_1",
-				cmd:     "./abc003_1",
+				problem: "abc001_1",
+				cmd:     "./abc001_1",
 			},
 		},
 		{
-			args:   []string{"goj", "test", "abc003_3", "-c", "hogehoge"},
+			args:   []string{"goj", "test", "abc173_a", "-c", "hogehoge"},
 			config: &Config{DefaultLanguage: "c++", Languages: nil},
 			want: result{
-				problem: "abc003_3",
+				problem: "abc173_a",
 				cmd:     "hogehoge",
 			},
 		},
@@ -144,7 +143,7 @@ func TestParseTestCmdArgs(t *testing.T) {
 			config: &Config{DefaultLanguage: "c++", Languages: languages},
 		},
 		{
-			args:   []string{"goj", "test", "abc003_5", "hogehoge"},
+			args:   []string{"goj", "test", "abc173_c", "hogehoge"},
 			config: &Config{DefaultLanguage: "c++", Languages: languages},
 		},
 	}
