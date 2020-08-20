@@ -7,31 +7,26 @@ import (
 	"github.com/urfave/cli"
 )
 
-func ParseSubmitCmdArgs(c *cli.Context, config *Config) (lang *Language, contest, problem string, err error) {
-	problems, err := LoadProblems()
-	if err != nil {
-		return nil, "", "", err
+func ParseSubmitCmdArgs(c *cli.Context, config *Config) (lang *Language, problem *ProblemInfo, err error) {
+	langName := c.String("l")
+	if langName == "" {
+		langName = config.DefaultLanguage
 	}
-	lang, err = findLang(config.Languages, config.DefaultLanguage, c.String("l"))
+	lang, err = FindLang(config.Languages, langName)
 	if err != nil {
-		return nil, "", "", err
+		return nil, nil, err
 	}
 	// 最後に編集されたファイルから提出する問題を決める
-	problem, err = FindProblemName(c.Args().First(), lang.Ext)
+	problemName, err := FindProblemName(c.Args().First(), lang.Ext)
 	if err != nil {
-		return nil, "", "", err
+		return nil, nil, err
 	}
-	for _, p := range problems.Problems {
-		if p.Name == problem {
-			contest = p.Contest
-			break
-		}
-	}
-	if contest == "" {
-		return nil, "", "", fmt.Errorf("cannot find problem: %s", problem)
+	problem, err = FindProblem(problemName)
+	if err != nil {
+		return nil, nil, err
 	}
 
-	return lang, contest, problem, nil
+	return lang, problem, nil
 }
 
 func NewSubmitCmd(atcoder *AtCoder, config *Config) cli.Command {
@@ -52,20 +47,21 @@ func NewSubmitCmd(atcoder *AtCoder, config *Config) cli.Command {
 			},
 		},
 		Action: func(c *cli.Context) error {
-			lang, contest, problem, err := ParseSubmitCmdArgs(c, config)
+			lang, problem, err := ParseSubmitCmdArgs(c, config)
 			if err != nil {
 				return err
 			}
 
-			if !c.Bool("f") {
-				if err := lang.Build(problem); err != nil {
+			if !c.Bool("skip") {
+				if err := lang.Build(problem.Name); err != nil {
 					return err
 				}
-				floatTolerance := 0.0
+				floatTolerance := problem.FloatTolerance
 				if c.Uint("f") != 0 {
 					floatTolerance = math.Pow10(-int(c.Uint("f")))
 				}
-				result, err := Judge(problem, lang.GetRunCmd(problem), 2*1000, 1024, floatTolerance)
+				result, err := Judge(problem.Name, lang.GetRunCmd(problem.Name),
+					problem.TimeLimitSec*1000, problem.MemoryLimitMB, floatTolerance)
 				if err != nil {
 					return err
 				}
@@ -75,11 +71,21 @@ func NewSubmitCmd(atcoder *AtCoder, config *Config) cli.Command {
 				}
 			}
 
-			src := problem + lang.Ext
-			if err := atcoder.Submit(contest, problem, src, lang.Name); err != nil {
-				return fmt.Errorf("%v: submit failed (%s, %s, %s, %s)", err, contest, problem, src, lang.Name)
+			src := problem.Name + lang.Ext
+
+			// 提出するか確認する
+			fmt.Printf("submit? %s/%s %s %s [y/n]: ", problem.Contest, problem.Name, src, lang.Name)
+			var yes string
+			fmt.Scan(&yes)
+			if yes != "y" {
+				LogInfo("submission interrupted")
+				return nil
 			}
-			if err := atcoder.WatchLastSubmissionStatus(contest); err != nil {
+
+			if err := atcoder.Submit(problem.Contest, problem.Name, src, lang.Name); err != nil {
+				return fmt.Errorf("%v: submit failed %s/%s, %s, %s", err, problem.Contest, problem.Name, src, lang.Name)
+			}
+			if err := atcoder.WatchLastSubmissionStatus(problem.Contest); err != nil {
 				return err
 			}
 			return nil

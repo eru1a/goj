@@ -13,7 +13,11 @@ func ParseDownloadCmdArgs(c *cli.Context, config *Config) (lang *Language, conte
 	if len(c.Args()) > 1 {
 		return nil, "", "", errors.New("goj download <contest> or <contest/problem>")
 	}
-	lang, err = findLang(config.Languages, config.DefaultLanguage, c.String("l"))
+	langName := c.String("l")
+	if langName == "" {
+		langName = config.DefaultLanguage
+	}
+	lang, err = FindLang(config.Languages, langName)
 	if err != nil {
 		return nil, "", "", err
 	}

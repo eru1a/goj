@@ -7,31 +7,42 @@ import (
 	"github.com/urfave/cli"
 )
 
-func ParseTestCmdArgs(c *cli.Context, config *Config) (lang *Language, problem string, cmd string, err error) {
+func ParseTestCmdArgs(c *cli.Context, config *Config) (lang *Language, problem *ProblemInfo, cmd string, err error) {
 	if len(c.Args()) > 1 {
-		return nil, "", "", errors.New("goj test <problem>")
+		return nil, nil, "", errors.New("goj test <problem>")
 	}
+
+	var problemName string
 
 	switch {
 	case c.String("c") != "" && c.Args().First() == "":
 		// -commandが与えられている場合は<problem>も必要
-		return nil, "", "", errors.New("goj test <problem>")
+		return nil, nil, "", errors.New("goj test <problem>")
 
-	case c.String("c") == "":
-		lang, err = findLang(config.Languages, config.DefaultLanguage, c.String("l"))
-		if err != nil {
-			return nil, "", "", errors.New("couldn't find lang, and command was not given")
-		}
-
-		problem, err = FindProblemName(c.Args().First(), lang.Ext)
-		if err != nil {
-			return nil, "", "", err
-		}
-		cmd = lang.GetRunCmd(problem)
+	case c.String("c") != "":
+		problemName = c.Args().First()
+		cmd = c.String("c")
 
 	default:
-		problem = c.Args().First()
-		cmd = c.String("c")
+		langName := c.String("l")
+		if langName == "" {
+			langName = config.DefaultLanguage
+		}
+		lang, err = FindLang(config.Languages, langName)
+		if err != nil {
+			return nil, nil, "", errors.New("couldn't find lang, and command was not given")
+		}
+
+		problemName, err = FindProblemName(c.Args().First(), lang.Ext)
+		if err != nil {
+			return nil, nil, "", err
+		}
+		cmd = lang.GetRunCmd(problemName)
+	}
+
+	problem, err = FindProblem(problemName)
+	if err != nil {
+		return nil, nil, "", err
 	}
 
 	return lang, problem, cmd, nil
@@ -61,16 +72,16 @@ func NewTestCmd(config *Config) cli.Command {
 			}
 
 			if lang != nil {
-				if err := lang.Build(problem); err != nil {
+				if err := lang.Build(problem.Name); err != nil {
 					return err
 				}
 			}
 
-			floatTolerance := 0.0
+			floatTolerance := problem.FloatTolerance
 			if c.Int("f") != 0 {
 				floatTolerance = math.Pow10(-int(c.Uint("f")))
 			}
-			if _, err := Judge(problem, cmd, 2*1000, 1024, floatTolerance); err != nil {
+			if _, err := Judge(problem.Name, cmd, problem.TimeLimitSec*1000, problem.MemoryLimitMB, floatTolerance); err != nil {
 				return err
 			}
 			return nil

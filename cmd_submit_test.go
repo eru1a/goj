@@ -16,6 +16,7 @@ import (
 func TestParseSubmitCmdArgs(t *testing.T) {
 	log.SetOutput(ioutil.Discard)
 
+	// TODO: testdata/problemを使う
 	if err := os.Chdir("testdata/parse_args/submit/abc003"); err != nil {
 		panic(err)
 	}
@@ -106,11 +107,11 @@ func TestParseSubmitCmdArgs(t *testing.T) {
 					},
 				},
 				Action: func(c *cli.Context) error {
-					_, contest, problem, err := ParseSubmitCmdArgs(c, test.config)
+					_, problem, err := ParseSubmitCmdArgs(c, test.config)
 					if err != nil {
 						return err
 					}
-					got := result{contest, problem}
+					got := result{problem.Contest, problem.Name}
 					if !reflect.DeepEqual(got, test.want) {
 						return errors.New(pretty.Compare(test.want, got))
 					}
@@ -168,7 +169,7 @@ func TestParseSubmitCmdArgs(t *testing.T) {
 					},
 				},
 				Action: func(c *cli.Context) error {
-					_, _, _, err := ParseSubmitCmdArgs(c, test.config)
+					_, _, err := ParseSubmitCmdArgs(c, test.config)
 					if err == nil {
 						return errors.New("should error: " + strings.Join(test.args, " "))
 					}

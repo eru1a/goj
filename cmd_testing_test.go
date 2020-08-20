@@ -16,6 +16,7 @@ import (
 func TestParseTestCmdArgs(t *testing.T) {
 	log.SetOutput(ioutil.Discard)
 
+	// TODO: testdata/problemを使う
 	if err := os.Chdir("testdata/parse_args/submit/abc003"); err != nil {
 		panic(err)
 	}
@@ -109,7 +110,7 @@ func TestParseTestCmdArgs(t *testing.T) {
 					if err != nil {
 						return err
 					}
-					got := result{problem, cmd}
+					got := result{problem.Name, cmd}
 					if !reflect.DeepEqual(got, test.want) {
 						return errors.New(pretty.Compare(test.want, got))
 					}

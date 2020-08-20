@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -9,19 +8,6 @@ import (
 	cookiejar "github.com/juju/persistent-cookiejar"
 	"github.com/urfave/cli"
 )
-
-func findLang(languages []*Language, defaultLang, argLang string) (*Language, error) {
-	langName := defaultLang
-	if argLang != "" {
-		langName = argLang
-	}
-	for _, l := range languages {
-		if l.Name == langName {
-			return l, nil
-		}
-	}
-	return nil, fmt.Errorf("cannot find %s in languages", defaultLang)
-}
 
 func main() {
 	log.SetFlags(0)
@@ -31,11 +17,11 @@ func main() {
 		panic(err)
 	}
 
-	cacheDir, err := os.UserCacheDir()
+	userCacheDir, err := os.UserCacheDir()
 	if err != nil {
 		panic(err)
 	}
-	gojCacheDir := filepath.Join(cacheDir, "goj")
+	gojCacheDir := filepath.Join(userCacheDir, "goj")
 	if err := os.MkdirAll(gojCacheDir, 0755); err != nil {
 		panic(err)
 	}

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 	"strings"
@@ -31,4 +32,13 @@ func (l *Language) Build(problem string) error {
 
 func (l *Language) GetRunCmd(problem string) string {
 	return strings.ReplaceAll(l.RunCmd, "[P]", problem)
+}
+
+func FindLang(languages []*Language, name string) (*Language, error) {
+	for _, lang := range languages {
+		if lang.Name == name {
+			return lang, nil
+		}
+	}
+	return nil, fmt.Errorf("cannot find %s in languages", name)
 }
