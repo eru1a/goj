@@ -32,7 +32,7 @@ func ParseSubmitCmdArgs(c *cli.Context, config *Config) (lang *Language, problem
 func NewSubmitCmd(atcoder *AtCoder, config *Config) cli.Command {
 	return cli.Command{
 		Name:  "submit",
-		Usage: "goj submit <problem>",
+		Usage: "goj submit [problem]",
 		Flags: []cli.Flag{
 			cli.StringFlag{
 				Name: "language, l",

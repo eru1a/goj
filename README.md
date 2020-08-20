@@ -3,84 +3,85 @@
 勉強として作っているAtCoderの補助ツールです。
 (プログラミング初心者が作ったツールなので品質は察してください)
 
-## 使い方
-このツールは、
-```
-.
-├── abc174
-│   ├── abc174_c.cpp
-│   ├── goj.toml
-│   └── test_abc174_c
-│       ├── sample-1.in
-│       ├── sample-1.out
-│       ├── sample-2.in
-│       ├── sample-2.out
-│       ├── sample-3.in
-│       └── sample-3.out
-└── abc175
-    ├── abc175_a.cpp
-    ├── abc175_b.cpp
-    ├── goj.toml
-    ├── test_abc175_a
-    │   ├── sample-1.in
-    │   ├── sample-1.out
-    │   ├── sample-2.in
-    │   ├── sample-2.out
-    │   ├── sample-3.in
-    │   └── sample-3.out
-    └── test_abc175_b
-        ├── sample-1.in
-        ├── sample-1.out
-        ├── sample-2.in
-        ├── sample-2.out
-        ├── sample-3.in
-        ├── sample-3.out
-        ├── sample-4.in
-        └── sample-4.out
-```
-のように1つのコンテストに1つのディレクトリを割り当て、
-各問題は各コンテストのディレクトリの直下に置くような構造を用いた時に
-使いやすくなるように設計されています。
-また、~/.config/goj/config.tomlに設定ファイルがありデフォルト言語等を設定出来ます。
+
+# 使い方
+
+
+## 設定ファイル
+
+`~/.config/goj/config.toml`に設定ファイルが置かれます。
+デフォルトで使う言語や生成するテンプレートファイル等を変更出来ます。
 
 
 ## ログイン
+
 ```
 $ goj login
 ```
-でユーザー名とパスワードを聞かれるので入力してください。
-cookiejarが~/.cachd/goj/cookiejarに保存されます。
+
+ユーザー名とパスワードを聞かれるので入力してください。
+cookiejarが~/.cache/goj/cookiejarに保存されます。
 コンテスト本番時以外はログインは不要です。
 
 
 ## テストケースのダウンロード
+
 ```
-$ goj download abc175/abc175_a
+$ goj download [contest/problem] or [contest] [-l language]
 ```
-で問題のサンプルケースをダウンロードするとともに問題のテンプレートファイルを作成します。
-問題名を省略するとコンテストの問題すべてをダウンロードします。
-コンテスト名も省略するとカレントディレクトリの名前をコンテスト名と見なします。
+
+`https://atcoder.jp/contests/contest/tasks/problem`のサンプルケースをダウンロードします。
+
+`[contest]`を渡した場合はコンテストの問題すべてのサンプルケースをダウンロードします。
+
+どちらも省略して単に`goj download`とした場合はカレントディレクトリの名前をコンテスト名と見なしダウンロードします。
+
+`[-l language]`で作成されるテンプレートファイルの言語を変更出来ます。
+
+ダウンロードした問題の情報は`./goj.toml`に記録されます。
 
 
 ## テスト
+
 ```
-$ goj test abc175_b
+$ goj test [problem] [-l language] [-c command]
 ```
-で問題abc175_bのテストを行います。
-問題をabc175_bをテストしたい時、与える引数が問題名のsuffixに一致していれば大丈夫です。
-つまり最後に編集したのがB問題であれば`goj test b`で構いません。
-問題名を省略すると最後に編集されたファイルの名前を問題名と見なします。
-`-command <command>`でテストするコマンドを指定できます。この場合問題名は必須です。
+
+問題problemのテストを行います。
+problemは問題名のsuffixに一致していれば大丈夫です。
+例えばabc175_bであれば`goj test b`でいいです(あるいは`goj test 75_b`とかでも)。
+
+`[problem]`を省略した場合は最後に編集されたファイルの名前を問題名と見なしてテストします。
+
+`[-l language]`でテストする言語を変更出来ます。
+
+`[-c command]`でテストするコマンドを指定できます。この場合problemは必須になります。
 
 
 ## 提出
+
 ```
-$ goj submit abc175_b
+$ goj submit [problem] [-l language] [--skip]
 ```
-でabc175_b.cpp(デフォルトの場合)をテストしたのち問題abc175_bに提出します。
-問題名を省略すると最後に編集されたファイルの名前を提出する問題と見なします。
-`-skip`でテストをスキップ出来ます。
+
+問題problemに対してテストを行い成功したら`problem.cpp`を提出します。
+コンテスト名は`./goj.toml`から取得するため、`goj download`した問題でなければ提出出来ません。
+
+`problem`を省略した場合は最後に編集されたファイルの名前を提出する問題と見なします。
+
+`[-l language]`で提出する言語を変更出来ます。
+
+`[--skip]`でテストをスキップ出来ます。
 
 
-## demo
+## その他コマンド
+
+
+### `goj status [contest]`
+
+contestでの自分の提出結果を表示します。
+
+
+# demo
+
 ![demo](demo.gif)

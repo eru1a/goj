@@ -12,10 +12,10 @@ import (
 func NewStatusCmd(atcoder *AtCoder) cli.Command {
 	return cli.Command{
 		Name:  "status",
-		Usage: "goj status",
+		Usage: "goj status [contest]",
 		Action: func(c *cli.Context) error {
 			if len(c.Args()) > 1 {
-				return errors.New("goj status <contest>")
+				return errors.New("goj status [contest]")
 			}
 			contest := c.Args().First()
 			if contest == "" {

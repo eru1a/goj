@@ -9,7 +9,7 @@ import (
 
 func ParseTestCmdArgs(c *cli.Context, config *Config) (lang *Language, problem *ProblemInfo, cmd string, err error) {
 	if len(c.Args()) > 1 {
-		return nil, nil, "", errors.New("goj test <problem>")
+		return nil, nil, "", errors.New("goj test [problem]")
 	}
 
 	var problemName string
@@ -17,7 +17,7 @@ func ParseTestCmdArgs(c *cli.Context, config *Config) (lang *Language, problem *
 	switch {
 	case c.String("c") != "" && c.Args().First() == "":
 		// -commandが与えられている場合は<problem>も必要
-		return nil, nil, "", errors.New("goj test <problem>")
+		return nil, nil, "", errors.New("goj test [problem]")
 
 	case c.String("c") != "":
 		problemName = c.Args().First()
@@ -52,7 +52,7 @@ func NewTestCmd(config *Config) cli.Command {
 	return cli.Command{
 		Name:    "test",
 		Aliases: []string{"t"},
-		Usage:   "goj test <problem>",
+		Usage:   "goj test [problem]",
 		Flags: []cli.Flag{
 			cli.StringFlag{
 				Name: "command, c",

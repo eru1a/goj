@@ -11,7 +11,7 @@ import (
 
 func ParseDownloadCmdArgs(c *cli.Context, config *Config) (lang *Language, contest string, problem string, err error) {
 	if len(c.Args()) > 1 {
-		return nil, "", "", errors.New("goj download <contest> or <contest/problem>")
+		return nil, "", "", errors.New("usage: goj download [contest/problem] or [contest/problem]")
 	}
 	langName := c.String("l")
 	if langName == "" {
@@ -39,7 +39,7 @@ func ParseDownloadCmdArgs(c *cli.Context, config *Config) (lang *Language, conte
 		// <contest/problem>
 		return lang, split[0], split[1], nil
 	default:
-		return nil, "", "", errors.New("goj download <contest> or <contest/problem>")
+		return nil, "", "", errors.New("usage: goj download [contest/problem] or [contest/problem]")
 	}
 }
 
@@ -47,7 +47,7 @@ func NewDownloadCmd(atcoder *AtCoder, config *Config) cli.Command {
 	return cli.Command{
 		Name:    "download",
 		Aliases: []string{"dl", "d"},
-		Usage:   "goj download <contest> or <contest/problem>",
+		Usage:   "goj download [contest/problem] or [contest/problem]",
 		Flags: []cli.Flag{
 			cli.StringFlag{
 				Name: "language, l",

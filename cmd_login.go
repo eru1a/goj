@@ -30,6 +30,7 @@ func NewLoginCmd(atcoder *AtCoder, jar *cookiejar.Jar, config *Config) cli.Comma
 			if err != nil {
 				return err
 			}
+			fmt.Println()
 			password := string(bytes)
 			if err := atcoder.Login(username, password); err != nil {
 				return err
