@@ -47,6 +47,9 @@ func (a *AtCoder) DownloadContest(contest string, lang *Language) error {
 		if err != nil {
 			return err
 		}
+		if err := p.AddTOML(); err != nil {
+			return err
+		}
 		if err := p.Save(); err != nil {
 			return err
 		}
@@ -58,6 +61,7 @@ func (a *AtCoder) DownloadContest(contest string, lang *Language) error {
 }
 
 func (a *AtCoder) DownloadProblem(contest, problem string, lang *Language) error {
+	// TODO: 上とほとんど同じ
 	p, err := a.FetchProblem(contest, problem)
 	if err != nil {
 		return err
