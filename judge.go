@@ -152,7 +152,7 @@ func Judge(problem string, command string, timeLimitMS int, memoryLimitMB int, f
 		// 使用メモリってこうやって測るの？
 		memory := float64(cmd.ProcessState.SysUsage().(*syscall.Rusage).Maxrss) / 1000.0
 
-		LogStatus("time: %.5f sec", elapsedMS)
+		LogStatus("time: %.5f ms", elapsedMS)
 		LogStatus("memory: %.5f MB", memory)
 
 		switch {
