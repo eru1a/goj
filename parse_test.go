@@ -147,6 +147,22 @@ func TestParseAtCoderProblem(t *testing.T) {
 				},
 			},
 		},
+		{
+			file: "testdata/parse/abc036_c",
+			problem: &Problem{
+				ProblemInfo: &ProblemInfo{
+					ID:            "C",
+					TimeLimitSec:  2,
+					MemoryLimitMB: 256,
+				},
+				TestCases: []*TestCase{
+					{
+						Input:  "5\n3\n3\n1\n6\n1\n",
+						Output: "1\n1\n0\n2\n0\n",
+					},
+				},
+			},
+		},
 	}
 
 	for _, test := range tests {

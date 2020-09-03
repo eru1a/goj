@@ -63,7 +63,7 @@ func parseProblemTestCases(doc *goquery.Document) ([]*TestCase, error) {
 	{
 		var input, output []string
 
-		h3sel := doc.Find(".part > section > h3")
+		h3sel := doc.Find("section > h3")
 		h3sel.Each(func(_ int, s *goquery.Selection) {
 			switch {
 			case strings.HasPrefix(s.Text(), "入力例"):
