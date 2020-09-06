@@ -54,11 +54,10 @@ func parseProblemTestCases(doc *goquery.Document) ([]*TestCase, error) {
 	//
 	// https://atcoder.jp/contests/m-solutions2020/tasks/m_solutions2020_a
 	// <div class="part">
-	// <section>
-	// <h3>入力例 1 <span class="btn btn-default btn-sm btn-copy" tabindex="0" data-toggle="tooltip" data-trigger="manual" title="" data-target="pre-sample0" data-original-title="Copied!">Copy</span></h3><div class="div-btn-copy"><span class="btn-copy btn-pre" tabindex="0" data-toggle="tooltip" data-trigger="manual" title="" data-target="pre-sample0" data-original-title="Copied!">Copy</span></div><pre id="pre-sample0">725
-	// </pre>
-	//
-	// </section>
+	//   <section>
+	//     <h3>入力例 1</h3><pre>725
+	//     </pre>
+	//   </section>
 	// </div>
 	{
 		var input, output []string
@@ -81,15 +80,51 @@ func parseProblemTestCases(doc *goquery.Document) ([]*TestCase, error) {
 		}
 	}
 
-	// 古いパターン
+	// 古いパターン1
+	// .partの中のh3の隣のpre
+	//
+	// https://atcoder.jp/contests/arc005/tasks/arc005_3
+	// <div class="part">
+	//   <h3>入力例 1</h3>
+	//   <pre>
+	//   1
+	//   3
+	//   1 2 3
+	//   3
+	//   2 3 4
+	//   </pre>
+	// </div>
+	{
+		var input, output []string
+
+		h3sel := doc.Find(".part > h3")
+		h3sel.Each(func(_ int, s *goquery.Selection) {
+			switch {
+			case strings.HasPrefix(s.Text(), "入力例"):
+				input = append(input, s.Parent().Find("pre").Text())
+			case strings.HasPrefix(s.Text(), "出力例"):
+				output = append(output, s.Parent().Find("pre").Text())
+			}
+		})
+		if len(input) != 0 {
+			testcases, err := newTestCases(input, output)
+			if err != nil {
+				return nil, err
+			}
+			return testcases, nil
+		}
+	}
+
+	// 古いパターン2
 	// h3の下のselectionの中のpre
 	//
 	// https://atcoder.jp/contests/arc001/tasks/arc001_1
 	// <h3>入力例 1</h3>
 	// <section>
-	// <div class="div-btn-copy"><span class="btn-copy btn-pre" tabindex="0" data-toggle="tooltip" data-trigger="manual" title="" data-target="for_copy0" data-original-title="Copied!">Copy</span></div><pre class="prettyprint linenums source-code prettyprinted" style=""><ol class="linenums"><li class="L0"><span class="lit">9</span></li><li class="L1"><span class="lit">131142143</span></li></ol></pre><pre id="for_copy0" class="source-code-for-copy">9
-	// 131142143
-	// </pre>
+	//   <pre class="prettyprint linenums">
+	//   9
+	//   131142143
+	//   </pre>
 	// </section>
 	{
 		var input, output []string
