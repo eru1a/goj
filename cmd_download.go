@@ -10,8 +10,9 @@ import (
 )
 
 func ParseDownloadCmdArgs(c *cli.Context, config *Config) (lang *Language, contest string, problem string, err error) {
+	usage := "usage: goj download [url] or [contest/problem] or [contest/problem]"
 	if len(c.Args()) > 1 {
-		return nil, "", "", errors.New("usage: goj download [contest/problem] or [contest/problem]")
+		return nil, "", "", errors.New(usage)
 	}
 	langName := c.String("l")
 	if langName == "" {
@@ -32,14 +33,21 @@ func ParseDownloadCmdArgs(c *cli.Context, config *Config) (lang *Language, conte
 			return nil, "", "", err
 		}
 		return lang, filepath.Base(cwd), "", nil
+	case strings.HasPrefix(first, "http"):
+		// url
+		contest, problem, err := ContestAndProblemFromURL(first)
+		if err != nil {
+			return nil, "", "", errors.New(usage)
+		}
+		return lang, contest, problem, nil
 	case len(split) == 1:
-		// <contest>
+		// contest
 		return lang, first, "", nil
 	case len(split) == 2:
-		// <contest/problem>
+		// contest/problem
 		return lang, split[0], split[1], nil
 	default:
-		return nil, "", "", errors.New("usage: goj download [contest/problem] or [contest/problem]")
+		return nil, "", "", errors.New(usage)
 	}
 }
 
@@ -47,7 +55,7 @@ func NewDownloadCmd(atcoder *AtCoder, config *Config) cli.Command {
 	return cli.Command{
 		Name:    "download",
 		Aliases: []string{"dl", "d"},
-		Usage:   "goj download [contest/problem] or [contest/problem]",
+		Usage:   "goj download [url] or [contest/problem] or [contest/problem]",
 		Flags: []cli.Flag{
 			cli.StringFlag{
 				Name: "language, l",

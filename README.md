@@ -27,7 +27,7 @@ cookiejarが~/.cache/goj/cookiejarに保存されます。
 ## テストケースのダウンロード
 
 ```
-$ goj download [contest/problem] or [contest] [-l language]
+$ goj download [url] or [contest/problem] or [contest] [-l language]
 ```
 
 `https://atcoder.jp/contests/contest/tasks/problem`のサンプルケースをダウンロードします。

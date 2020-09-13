@@ -63,6 +63,30 @@ func TestParseDownloadCmdArgs(t *testing.T) {
 				problem: "abc173_c",
 			},
 		},
+		{
+			args:   []string{"goj", "download", "https://atcoder.jp/contests/abc173/tasks/abc173_c"},
+			config: config,
+			want: result{
+				contest: "abc173",
+				problem: "abc173_c",
+			},
+		},
+		{
+			args:   []string{"goj", "download", "https://atcoder.jp/contests/abc173/"},
+			config: config,
+			want: result{
+				contest: "abc173",
+				problem: "",
+			},
+		},
+		{
+			args:   []string{"goj", "download", "https://atcoder.jp/contests/abc173/tasks"},
+			config: config,
+			want: result{
+				contest: "abc173",
+				problem: "",
+			},
+		},
 	}
 
 	for _, test := range tests {

@@ -98,9 +98,27 @@ func (a *AtCoder) FetchContest(contest string) (*Contest, error) {
 	}, nil
 }
 
+// url -> (contest, problem, error)
+func ContestAndProblemFromURL(url string) (string, string, error) {
+	// TODO: 正規表現で厳密に
+	sp := strings.Split(url, "/")
+	switch len(sp) {
+	case 5, 6:
+		// コンテストのトップページか問題一覧ページ
+		return sp[4], "", nil
+	case 7:
+		// 問題ページ
+		return sp[4], sp[6], nil
+	default:
+		return "", "", fmt.Errorf("invalid atcoder url: %s", url)
+	}
+}
+
 func (a *AtCoder) FetchProblemFromURL(url string) (*Problem, error) {
-	contest := strings.Split(url, "/")[4]
-	problem := strings.Split(url, "/")[6]
+	contest, problem, err := ContestAndProblemFromURL(url)
+	if err != nil {
+		return nil, err
+	}
 	return a.FetchProblem(contest, problem)
 }
 
