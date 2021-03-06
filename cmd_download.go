@@ -6,12 +6,12 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
 func ParseDownloadCmdArgs(c *cli.Context, config *Config) (lang *Language, contest string, problem string, err error) {
 	usage := "usage: goj download [url] or [contest/problem] or [contest/problem]"
-	if len(c.Args()) > 1 {
+	if c.Args().Len() > 1 {
 		return nil, "", "", errors.New(usage)
 	}
 	langName := c.String("l")
@@ -51,14 +51,15 @@ func ParseDownloadCmdArgs(c *cli.Context, config *Config) (lang *Language, conte
 	}
 }
 
-func NewDownloadCmd(atcoder *AtCoder, config *Config) cli.Command {
-	return cli.Command{
+func NewDownloadCmd(atcoder *AtCoder, config *Config) *cli.Command {
+	return &cli.Command{
 		Name:    "download",
 		Aliases: []string{"dl", "d"},
 		Usage:   "goj download [url] or [contest/problem] or [contest/problem]",
 		Flags: []cli.Flag{
-			cli.StringFlag{
-				Name: "language, l",
+			&cli.StringFlag{
+				Name:    "language",
+				Aliases: []string{"l"},
 			},
 		},
 		Action: func(c *cli.Context) error {

@@ -10,7 +10,7 @@ import (
 	"testing"
 
 	"github.com/kylelemons/godebug/pretty"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
 func TestParseSubmitCmdArgs(t *testing.T) {
@@ -101,16 +101,18 @@ func TestParseSubmitCmdArgs(t *testing.T) {
 
 	for _, test := range testsOK {
 		app := cli.NewApp()
-		app.Commands = []cli.Command{
+		app.Commands = []*cli.Command{
 			{
 				Name: "submit",
 				Flags: []cli.Flag{
-					cli.StringFlag{
-						Name: "language, l",
+					&cli.StringFlag{
+						Name:    "language",
+						Aliases: []string{"l"},
 					},
-					cli.BoolFlag{
-						Name:  "force, f",
-						Usage: "skip tests",
+					&cli.BoolFlag{
+						Name:    "force",
+						Aliases: []string{"f"},
+						Usage:   "skip tests",
 					},
 				},
 				Action: func(c *cli.Context) error {
@@ -163,16 +165,18 @@ func TestParseSubmitCmdArgs(t *testing.T) {
 
 	for _, test := range testsNG {
 		app := cli.NewApp()
-		app.Commands = []cli.Command{
+		app.Commands = []*cli.Command{
 			{
 				Name: "submit",
 				Flags: []cli.Flag{
-					cli.StringFlag{
-						Name: "language, l",
+					&cli.StringFlag{
+						Name:    "language",
+						Aliases: []string{"l"},
 					},
-					cli.BoolFlag{
-						Name:  "force, f",
-						Usage: "skip tests",
+					&cli.BoolFlag{
+						Name:    "force",
+						Aliases: []string{"f"},
+						Usage:   "skip tests",
 					},
 				},
 				Action: func(c *cli.Context) error {

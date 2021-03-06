@@ -6,15 +6,15 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
-func NewStatusCmd(atcoder *AtCoder) cli.Command {
-	return cli.Command{
+func NewStatusCmd(atcoder *AtCoder) *cli.Command {
+	return &cli.Command{
 		Name:  "status",
 		Usage: "goj status [contest]",
 		Action: func(c *cli.Context) error {
-			if len(c.Args()) > 1 {
+			if c.Args().Len() > 1 {
 				return errors.New("goj status [contest]")
 			}
 			contest := c.Args().First()

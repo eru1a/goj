@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"math"
 
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
 func ParseSubmitCmdArgs(c *cli.Context, config *Config) (lang *Language, problem *ProblemInfo, err error) {
@@ -29,20 +29,21 @@ func ParseSubmitCmdArgs(c *cli.Context, config *Config) (lang *Language, problem
 	return lang, problem, nil
 }
 
-func NewSubmitCmd(atcoder *AtCoder, config *Config) cli.Command {
-	return cli.Command{
+func NewSubmitCmd(atcoder *AtCoder, config *Config) *cli.Command {
+	return &cli.Command{
 		Name:    "submit",
 		Usage:   "goj submit [problem]",
 		Aliases: []string{"s"},
 		Flags: []cli.Flag{
-			cli.StringFlag{
-				Name: "language, l",
+			&cli.StringFlag{
+				Name:    "language",
+				Aliases: []string{"l"},
 			},
-			cli.BoolFlag{
+			&cli.BoolFlag{
 				Name:  "skip",
 				Usage: "skip tests",
 			},
-			cli.UintFlag{
+			&cli.UintFlag{
 				Name:  "f",
 				Usage: "float tolerance (10^(-f))",
 			},

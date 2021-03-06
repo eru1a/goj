@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	"github.com/kylelemons/godebug/pretty"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
 func TestParseDownloadCmdArgs(t *testing.T) {
@@ -91,13 +91,14 @@ func TestParseDownloadCmdArgs(t *testing.T) {
 
 	for _, test := range tests {
 		app := cli.NewApp()
-		app.Commands = []cli.Command{
+		app.Commands = []*cli.Command{
 			{
 				Name:    "download",
 				Aliases: []string{"dl", "d"},
 				Flags: []cli.Flag{
-					cli.StringFlag{
-						Name: "language, l",
+					&cli.StringFlag{
+						Name:    "language",
+						Aliases: []string{"l"},
 					},
 				},
 				Action: func(c *cli.Context) error {

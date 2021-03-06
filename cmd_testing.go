@@ -4,11 +4,11 @@ import (
 	"errors"
 	"math"
 
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
 func ParseTestCmdArgs(c *cli.Context, config *Config) (lang *Language, problem *ProblemInfo, cmd string, err error) {
-	if len(c.Args()) > 1 {
+	if c.Args().Len() > 1 {
 		return nil, nil, "", errors.New("goj test [problem]")
 	}
 
@@ -48,19 +48,21 @@ func ParseTestCmdArgs(c *cli.Context, config *Config) (lang *Language, problem *
 	return lang, problem, cmd, nil
 }
 
-func NewTestCmd(config *Config) cli.Command {
-	return cli.Command{
+func NewTestCmd(config *Config) *cli.Command {
+	return &cli.Command{
 		Name:    "test",
 		Aliases: []string{"t"},
 		Usage:   "goj test [problem]",
 		Flags: []cli.Flag{
-			cli.StringFlag{
-				Name: "command, c",
+			&cli.StringFlag{
+				Name: "command",
+				Aliases: []string{"c"},
 			},
-			cli.StringFlag{
-				Name: "language, l",
+			&cli.StringFlag{
+				Name: "language",
+				Aliases: []string{"l"},
 			},
-			cli.UintFlag{
+			&cli.UintFlag{
 				Name:  "f",
 				Usage: "float tolerance",
 			},

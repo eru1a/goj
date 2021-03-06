@@ -6,16 +6,16 @@ import (
 	"syscall"
 
 	cookiejar "github.com/juju/persistent-cookiejar"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 	"golang.org/x/crypto/ssh/terminal"
 )
 
-func NewLoginCmd(atcoder *AtCoder, jar *cookiejar.Jar, config *Config) cli.Command {
-	return cli.Command{
+func NewLoginCmd(atcoder *AtCoder, jar *cookiejar.Jar, config *Config) *cli.Command {
+	return &cli.Command{
 		Name:  "login",
 		Usage: "goj login",
 		Action: func(c *cli.Context) error {
-			if len(c.Args()) > 0 {
+			if c.Args().Len() > 0 {
 				return errors.New("goj login")
 			}
 

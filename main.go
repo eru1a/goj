@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 
 	cookiejar "github.com/juju/persistent-cookiejar"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
 func main() {
@@ -34,7 +34,7 @@ func main() {
 
 	app := cli.NewApp()
 
-	app.Commands = []cli.Command{
+	app.Commands = []*cli.Command{
 		NewDownloadCmd(atcoder, config),
 		NewTestCmd(config),
 		NewLoginCmd(atcoder, jar, config),

@@ -10,7 +10,7 @@ import (
 	"testing"
 
 	"github.com/kylelemons/godebug/pretty"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
 func TestParseTestCmdArgs(t *testing.T) {
@@ -93,15 +93,17 @@ func TestParseTestCmdArgs(t *testing.T) {
 
 	for _, test := range testsOK {
 		app := cli.NewApp()
-		app.Commands = []cli.Command{
+		app.Commands = []*cli.Command{
 			{
 				Name: "test",
 				Flags: []cli.Flag{
-					cli.StringFlag{
-						Name: "command, c",
+					&cli.StringFlag{
+						Name:    "command",
+						Aliases: []string{"c"},
 					},
-					cli.StringFlag{
-						Name: "language, l",
+					&cli.StringFlag{
+						Name:    "language",
+						Aliases: []string{"l"},
 					},
 				},
 				Action: func(c *cli.Context) error {
@@ -150,15 +152,17 @@ func TestParseTestCmdArgs(t *testing.T) {
 
 	for _, test := range testsNG {
 		app := cli.NewApp()
-		app.Commands = []cli.Command{
+		app.Commands = []*cli.Command{
 			{
 				Name: "test",
 				Flags: []cli.Flag{
-					cli.StringFlag{
-						Name: "command, c",
+					&cli.StringFlag{
+						Name:    "command",
+						Aliases: []string{"c"},
 					},
-					cli.StringFlag{
-						Name: "language, l",
+					&cli.StringFlag{
+						Name:    "language",
+						Aliases: []string{"l"},
 					},
 				},
 				Action: func(c *cli.Context) error {
