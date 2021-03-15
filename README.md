@@ -5,6 +5,12 @@
 
 # 使い方
 
+## インストール
+
+```
+go install github.com/eru1a/goj@latest
+```
+
 ## 設定ファイル
 
 `~/.config/goj/config.toml`に設定ファイルが置かれます。
@@ -13,7 +19,7 @@
 ## ログイン
 
 ```
-$ goj login
+goj login
 ```
 
 ユーザー名とパスワードを聞かれるので入力してください。
@@ -23,7 +29,7 @@ cookiejar が~/.cache/goj/cookiejar に保存されます。
 ## テストケースのダウンロード
 
 ```
-$ goj download [-l language] [url] or [contest/problem] or [contest]
+goj download [-l language] [url] or [contest/problem] or [contest]
 ```
 
 `https://atcoder.jp/contests/contest/tasks/problem`のサンプルケースをダウンロードします。
@@ -39,7 +45,7 @@ $ goj download [-l language] [url] or [contest/problem] or [contest]
 ## テスト
 
 ```
-$ goj test [-l language] [-c command] [problem]
+goj test [-l language] [-c command] [problem]
 ```
 
 問題 problem のテストを行います。
@@ -55,7 +61,7 @@ problem は問題名の suffix に一致していれば大丈夫です。
 ## 提出
 
 ```
-$ goj submit [-l language] [--skip] [problem]
+goj submit [-l language] [--skip] [problem]
 ```
 
 問題 problem に対してテストを行い成功したら`problem.cpp`を提出します。
@@ -72,7 +78,7 @@ $ goj submit [-l language] [--skip] [problem]
 ###
 
 ```
-$ goj status [contest]
+goj status [contest]
 ```
 
 contest での自分の提出結果を表示します。

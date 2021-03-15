@@ -55,11 +55,11 @@ func NewTestCmd(config *Config) *cli.Command {
 		Usage:   "goj test [problem]",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
-				Name: "command",
+				Name:    "command",
 				Aliases: []string{"c"},
 			},
 			&cli.StringFlag{
-				Name: "language",
+				Name:    "language",
 				Aliases: []string{"l"},
 			},
 			&cli.UintFlag{
