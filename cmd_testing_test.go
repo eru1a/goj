@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"path/filepath"
 	"reflect"
 	"strings"
 	"testing"
@@ -16,11 +17,20 @@ import (
 func TestParseTestCmdArgs(t *testing.T) {
 	log.SetOutput(ioutil.Discard)
 
-	if err := os.Chdir("testdata/problem/"); err != nil {
+	tmpDir := filepath.Join(os.TempDir(), "goj", "testing")
+	curDir, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+	createTempFiles(tmpDir)
+	if err := os.Chdir(tmpDir); err != nil {
 		panic(err)
 	}
 	defer func() {
-		if err := os.Chdir("../.."); err != nil {
+		if os.Chdir(curDir); err != nil {
+			panic(err)
+		}
+		if err := os.RemoveAll(tmpDir); err != nil {
 			panic(err)
 		}
 	}()
@@ -82,7 +92,7 @@ func TestParseTestCmdArgs(t *testing.T) {
 			},
 		},
 		{
-			args:   []string{"goj", "test", "abc173_a", "-c", "hogehoge"},
+			args:   []string{"goj", "test", "-c", "hogehoge", "abc173_a"},
 			config: &Config{DefaultLanguage: "c++", Languages: nil},
 			want: result{
 				problem: "abc173_a",
@@ -120,7 +130,7 @@ func TestParseTestCmdArgs(t *testing.T) {
 			},
 		}
 		if err := app.Run(test.args); err != nil {
-			t.Error(err)
+			t.Error(test.args, err)
 		}
 	}
 

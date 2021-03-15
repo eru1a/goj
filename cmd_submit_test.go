@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"path/filepath"
 	"reflect"
 	"strings"
 	"testing"
@@ -16,11 +17,20 @@ import (
 func TestParseSubmitCmdArgs(t *testing.T) {
 	log.SetOutput(ioutil.Discard)
 
-	if err := os.Chdir("testdata/problem"); err != nil {
+	tmpDir := filepath.Join(os.TempDir(), "goj", "submit")
+	curDir, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+	createTempFiles(tmpDir)
+	if err := os.Chdir(tmpDir); err != nil {
 		panic(err)
 	}
 	defer func() {
-		if err := os.Chdir("../.."); err != nil {
+		if os.Chdir(curDir); err != nil {
+			panic(err)
+		}
+		if err := os.RemoveAll(tmpDir); err != nil {
 			panic(err)
 		}
 	}()
@@ -129,7 +139,7 @@ func TestParseSubmitCmdArgs(t *testing.T) {
 			},
 		}
 		if err := app.Run(test.args); err != nil {
-			t.Error(err)
+			t.Error(test.args, err)
 		}
 	}
 
@@ -150,7 +160,7 @@ func TestParseSubmitCmdArgs(t *testing.T) {
 			config: &Config{DefaultLanguage: "python", Languages: languages},
 		},
 		{
-			args:   []string{"goj", "submit", "1", "-l", "python"},
+			args:   []string{"goj", "submit", "-l", "python", "1"},
 			config: &Config{DefaultLanguage: "c++", Languages: languages},
 		},
 		{

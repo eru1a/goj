@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"path/filepath"
 	"reflect"
 	"testing"
 
@@ -15,11 +16,20 @@ import (
 func TestParseDownloadCmdArgs(t *testing.T) {
 	log.SetOutput(ioutil.Discard)
 
-	if err := os.Chdir("testdata/parse_args/download/abc002"); err != nil {
+	tmpDir := filepath.Join(os.TempDir(), "goj", "abc002")
+	curDir, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+	createTempFiles(tmpDir)
+	if err := os.Chdir(tmpDir); err != nil {
 		panic(err)
 	}
 	defer func() {
-		if err := os.Chdir("../../../.."); err != nil {
+		if os.Chdir(curDir); err != nil {
+			panic(err)
+		}
+		if err := os.RemoveAll(tmpDir); err != nil {
 			panic(err)
 		}
 	}()
