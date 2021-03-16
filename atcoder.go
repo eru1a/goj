@@ -15,7 +15,7 @@ import (
 	cookiejar "github.com/juju/persistent-cookiejar"
 )
 
-const ATCODER_BASE_URL = "https://atcoder.jp"
+const AtCoderBaseURL = "https://atcoder.jp"
 
 var ErrNeedLogin = errors.New("you need to login")
 
@@ -81,7 +81,7 @@ func (a *AtCoder) DownloadProblem(contest, problem string, lang *Language) error
 }
 
 func (a *AtCoder) FetchContest(contest string) (*Contest, error) {
-	url := fmt.Sprintf("%s/contests/%s/tasks", ATCODER_BASE_URL, contest)
+	url := fmt.Sprintf("%s/contests/%s/tasks", AtCoderBaseURL, contest)
 
 	res, err := a.Client.Get(url)
 	if err != nil {
@@ -103,7 +103,7 @@ func (a *AtCoder) FetchContest(contest string) (*Contest, error) {
 func (a *AtCoder) CheckLogin() error {
 	// リダイレクトが起きるかどうかでログインしているか確認する
 
-	url := fmt.Sprintf("%s/contests/abc001/submit", ATCODER_BASE_URL)
+	url := fmt.Sprintf("%s/contests/abc001/submit", AtCoderBaseURL)
 
 	a.Client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
 		if len(via) >= 1 {
@@ -146,7 +146,7 @@ func (a *AtCoder) FetchProblemFromURL(url string) (*Problem, error) {
 }
 
 func (a *AtCoder) FetchProblem(contest, problem string) (*Problem, error) {
-	url := fmt.Sprintf("%s/contests/%s/tasks/%s", ATCODER_BASE_URL, contest, problem)
+	url := fmt.Sprintf("%s/contests/%s/tasks/%s", AtCoderBaseURL, contest, problem)
 
 	res, err := a.Client.Get(url)
 	if err != nil {
@@ -164,7 +164,7 @@ func (a *AtCoder) FetchProblem(contest, problem string) (*Problem, error) {
 }
 
 func (a *AtCoder) Login(username, password string) error {
-	submitURL := ATCODER_BASE_URL + "/login"
+	submitURL := AtCoderBaseURL + "/login"
 	res, err := a.Client.Get(submitURL)
 	if err != nil {
 		return err
@@ -206,7 +206,7 @@ func (a *AtCoder) Login(username, password string) error {
 }
 
 func (a *AtCoder) Submit(contest, problem string, srcPath string, lang string) error {
-	submitURL := fmt.Sprintf("%s/contests/%s/submit", ATCODER_BASE_URL, contest)
+	submitURL := fmt.Sprintf("%s/contests/%s/submit", AtCoderBaseURL, contest)
 
 	a.Client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
 		if len(via) >= 1 {
@@ -267,7 +267,7 @@ func (a *AtCoder) Submit(contest, problem string, srcPath string, lang string) e
 }
 
 func (a *AtCoder) SubmissionsStatus(contest string) ([]*SubmissionStatus, error) {
-	submissionsURL := fmt.Sprintf("%s/contests/%s/submissions/me", ATCODER_BASE_URL, contest)
+	submissionsURL := fmt.Sprintf("%s/contests/%s/submissions/me", AtCoderBaseURL, contest)
 
 	a.Client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
 		if len(via) >= 1 {

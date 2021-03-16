@@ -21,7 +21,7 @@ func ParseContest(r io.Reader) ([]string, error) {
 	var urls []string
 	doc.Find("table > tbody > tr > td:first-child > a").Each(func(_ int, s *goquery.Selection) {
 		url, _ := s.Attr("href")
-		urls = append(urls, ATCODER_BASE_URL+url)
+		urls = append(urls, AtCoderBaseURL+url)
 	})
 	if len(urls) == 0 {
 		return nil, errors.New("cannot parse problem urls")
@@ -40,7 +40,7 @@ func parseProblemID(doc *goquery.Document) (string, error) {
 func parseProblemTestCases(doc *goquery.Document) ([]*TestCase, error) {
 	newTestCases := func(input, output []string) ([]*TestCase, error) {
 		if len(input) != len(output) {
-			return nil, errors.New("The lengths of input and output are different.")
+			return nil, errors.New("The lengths of input and output are different")
 		}
 		var testcases []*TestCase
 		for i := range input {
