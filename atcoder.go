@@ -17,6 +17,8 @@ import (
 
 const ATCODER_BASE_URL = "https://atcoder.jp"
 
+var ErrNeedLogin = errors.New("you need to login")
+
 type Contest struct {
 	Name        string
 	URL         string
@@ -96,6 +98,27 @@ func (a *AtCoder) FetchContest(contest string) (*Contest, error) {
 		URL:         url,
 		ProblemURLs: problemURLs,
 	}, nil
+}
+
+func (a *AtCoder) CheckLogin() error {
+	// リダイレクトが起きるかどうかでログインしているか確認する
+
+	url := fmt.Sprintf("%s/contests/abc001/submit", ATCODER_BASE_URL)
+
+	a.Client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
+		if len(via) >= 1 {
+			return ErrNeedLogin
+		}
+		return nil
+	}
+
+	res, err := a.Client.Get(url)
+	if err != nil {
+		return err
+	}
+	defer res.Body.Close()
+
+	return nil
 }
 
 // url -> (contest, problem, error)
@@ -184,8 +207,19 @@ func (a *AtCoder) Login(username, password string) error {
 
 func (a *AtCoder) Submit(contest, problem string, srcPath string, lang string) error {
 	submitURL := fmt.Sprintf("%s/contests/%s/submit", ATCODER_BASE_URL, contest)
+
+	a.Client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
+		if len(via) >= 1 {
+			return ErrNeedLogin
+		}
+		return nil
+	}
+
 	res, err := a.Client.Get(submitURL)
 	if err != nil {
+		if errors.Is(err, ErrNeedLogin) {
+			return ErrNeedLogin
+		}
 		return err
 	}
 	defer res.Body.Close()
@@ -211,6 +245,11 @@ func (a *AtCoder) Submit(contest, problem string, srcPath string, lang string) e
 		return err
 	}
 
+	// 提出時のリダイレクトは必要
+	a.Client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
+		return nil
+	}
+
 	post, err := a.Client.PostForm(submitURL, url.Values{
 		"data.TaskScreenName": {problem},
 		"data.LanguageId":     {languageID},
@@ -229,8 +268,19 @@ func (a *AtCoder) Submit(contest, problem string, srcPath string, lang string) e
 
 func (a *AtCoder) SubmissionsStatus(contest string) ([]*SubmissionStatus, error) {
 	submissionsURL := fmt.Sprintf("%s/contests/%s/submissions/me", ATCODER_BASE_URL, contest)
+
+	a.Client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
+		if len(via) >= 1 {
+			return ErrNeedLogin
+		}
+		return nil
+	}
+
 	res, err := a.Client.Get(submissionsURL)
 	if err != nil {
+		if errors.Is(err, ErrNeedLogin) {
+			return nil, ErrNeedLogin
+		}
 		return nil, err
 	}
 	defer res.Body.Close()

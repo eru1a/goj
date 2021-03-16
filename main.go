@@ -32,7 +32,6 @@ func main() {
 	}
 	atcoder := NewAtCoder(jar)
 
-	// app := cli.NewApp()
 	app := &cli.App{
 		Name:  "goj",
 		Usage: "AtCoder support tool.",
@@ -41,6 +40,7 @@ func main() {
 	app.Commands = []*cli.Command{
 		NewDownloadCmd(atcoder, config),
 		NewTestCmd(config),
+		NewBuildCmd(config),
 		NewLoginCmd(atcoder, jar, config),
 		NewSubmitCmd(atcoder, config),
 		NewStatusCmd(atcoder),
