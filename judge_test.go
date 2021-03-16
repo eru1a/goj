@@ -157,12 +157,12 @@ func TestJudge(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		result, err := Judge(test.problem, test.cmd, 100, 32, 0)
+		result, err := Judge(test.problem, test.cmd, 500, 32, 0)
 		if err != nil {
 			t.Fatal(err)
 		}
 		if !reflect.DeepEqual(result, test.result) {
-			t.Errorf("[%s] %s", test.problem, pretty.Compare(test.result, result))
+			t.Errorf("[%s] %s", test.cmd, pretty.Compare(test.result, result))
 		}
 	}
 }
